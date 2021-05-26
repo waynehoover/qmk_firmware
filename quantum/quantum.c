@@ -15,6 +15,7 @@
  */
 
 #include "quantum.h"
+#include "magic.h"
 
 #ifdef BLUETOOTH_ENABLE
 #    include "outputselect.h"
@@ -57,12 +58,16 @@ float bell_song[][2] = SONG(TERMINAL_SOUND);
 #    include "process_auto_shift.h"
 #endif
 
-static void do_code16(uint16_t code, void (*f)(uint8_t)) {
+#ifdef KEY_OVERRIDE_ENABLE
+#    include "process_key_override_private.h"
+#endif
+
+uint8_t extract_mod_bits(uint16_t code) {
     switch (code) {
         case QK_MODS ... QK_MODS_MAX:
             break;
         default:
-            return;
+            return 0;
     }
 
     uint8_t mods_to_send = 0;
@@ -79,7 +84,11 @@ static void do_code16(uint16_t code, void (*f)(uint8_t)) {
         if (code & QK_LGUI) mods_to_send |= MOD_BIT(KC_LGUI);
     }
 
-    f(mods_to_send);
+    return mods_to_send;
+}
+
+static void do_code16(uint16_t code, void (*f)(uint8_t)) {
+    f(extract_mod_bits(code));
 }
 
 void register_code16(uint16_t code) {
@@ -233,7 +242,7 @@ bool process_record_quantum(keyrecord_t *record) {
 #ifdef AUDIO_ENABLE
             process_audio(keycode, record) &&
 #endif
-#ifdef BACKLIGHT_ENABLE
+#if defined(BACKLIGHT_ENABLE) || defined(LED_MATRIX_ENABLE)
             process_backlight(keycode, record) &&
 #endif
 #ifdef STENO_ENABLE
@@ -241,6 +250,9 @@ bool process_record_quantum(keyrecord_t *record) {
 #endif
 #if (defined(AUDIO_ENABLE) || (defined(MIDI_ENABLE) && defined(MIDI_BASIC))) && !defined(NO_MUSIC_MODE)
             process_music(keycode, record) &&
+#endif
+#ifdef KEY_OVERRIDE_ENABLE
+            process_key_override(keycode, record) &&
 #endif
 #ifdef TAP_DANCE_ENABLE
             process_tap_dance(keycode, record) &&
@@ -318,6 +330,17 @@ bool process_record_quantum(keyrecord_t *record) {
                 set_output(OUTPUT_BLUETOOTH);
                 return false;
 #endif
+#ifndef NO_ACTION_ONESHOT
+            case ONESHOT_TOGGLE:
+                oneshot_toggle();
+                break;
+            case ONESHOT_ENABLE:
+                oneshot_enable();
+                break;
+            case ONESHOT_DISABLE:
+                oneshot_disable();
+                break;
+#endif
         }
     }
 
@@ -341,25 +364,19 @@ layer_state_t update_tri_layer_state(layer_state_t state, uint8_t layer1, uint8_
 void update_tri_layer(uint8_t layer1, uint8_t layer2, uint8_t layer3) { layer_state_set(update_tri_layer_state(layer_state, layer1, layer2, layer3)); }
 
 void matrix_init_quantum() {
-#ifdef BOOTMAGIC_LITE
-    bootmagic_lite();
-#endif
-    if (!eeconfig_is_enabled()) {
-        eeconfig_init();
-    }
+    magic();
 #if defined(LED_NUM_LOCK_PIN) || defined(LED_CAPS_LOCK_PIN) || defined(LED_SCROLL_LOCK_PIN) || defined(LED_COMPOSE_PIN) || defined(LED_KANA_PIN)
     // TODO: remove calls to led_init_ports from keyboards and remove ifdef
     led_init_ports();
 #endif
 #ifdef BACKLIGHT_ENABLE
-#    ifdef LED_MATRIX_ENABLE
-    led_matrix_init();
-#    else
     backlight_init_ports();
-#    endif
 #endif
 #ifdef AUDIO_ENABLE
     audio_init();
+#endif
+#ifdef LED_MATRIX_ENABLE
+    led_matrix_init();
 #endif
 #ifdef RGB_MATRIX_ENABLE
     rgb_matrix_init();
@@ -400,6 +417,10 @@ void matrix_scan_quantum() {
 
 #if defined(AUDIO_ENABLE) && !defined(NO_MUSIC_MODE)
     matrix_scan_music();
+#endif
+
+#ifdef KEY_OVERRIDE_ENABLE
+    matrix_scan_key_override();
 #endif
 
 #ifdef SEQUENCER_ENABLE
