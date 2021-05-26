@@ -20,21 +20,17 @@ git config --add remote.upstream.fetch +refs/pull/*/head:refs/pull/upstream/*
 Do each time:
 
 git fetch upstream
-
 git merge upstream/master OR git merge upstream/develop
 
 to include a PR:
 
 git pull upstream refs/pull/11422/head
-
 git pull upstream refs/pull/8591/head
-
 git pull upstream refs/pull/9404/head
 
 to include non pr branch:
 
 git pull https://github.com/manna-harbour/qmk_firmware.git bilateral-combinations
-
 git merge bilateral-combinations
 
 Ideas: 
