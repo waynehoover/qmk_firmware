@@ -4,6 +4,8 @@ Highly inspired by:
 - https://github.com/rstacruz/my_qmk_keymaps
 - https://github.com/callum-oakley/keymap
 - https://github.com/precondition/dactyl-manuform-keymap
+- https://github.com/alterecco/machine/tree/main/qmk (qmk code layout)
+- https://github.com/skychil/kombol (combos)
 
 PRs included:
 - https://github.com/qmk/qmk_firmware/pull/8591 - combos

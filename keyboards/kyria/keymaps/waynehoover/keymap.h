@@ -9,7 +9,7 @@
 #define LN_BEG   G(KC_LEFT)     // Line beginning
 #define LN_END   G(KC_RIGHT)    // Line end
 #define VS_DELLI C(S(DV_K))     // Delete Line vscode
-#define HS_DELLI A(DV_S)        // Delete Line binding hammerspoon
+#define HS_DELLI A(DV_S)        // Delete Line binding hammerspoon (hyper-s)
 #define DEL_SLIN G(KC_BSPC)     // Delete from cursor to start of line
 #define DEL_WD   A(KC_BSPC)     // Delete Word
 #define LAUNCH   G(KC_SPC)      // Launcher
@@ -27,11 +27,14 @@
 #define SFT_LBRC LSFT_T(DV_LBRC)
 #define MO_LOW   MO(LOWER)
 #define MO_RAI   MO(RAISE)
-#define OSS_RAI  LT(RAISE, KC_F22) // One-shot-shift / raise
+#define OSS_RAI  LT(RAISE, KC_F22)  // One-shot-shift / raise
 #define SFT_PRN  LSFT_T(KC_F22)
-#define HS_HYP   KC_F19
+#define HS_HYP   KC_F19             // Not currently defined in hammerspoon
 #define HYP_ENT  HYPR_T(KC_ENT)
+#define HYP_BSPC HYPR_T(KC_BSPC)
+#define GUI_BSP  LGUI_T(KC_BSPC)
 #define OS_SFT   OSM(MOD_LSFT)
+#define ENT_LOW  LT(LOWER, KC_ENT)
 
 #define TD_DOT TD(DOT_TD)
 #define CACCCV TD(CA_CC_CV)
