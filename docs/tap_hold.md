@@ -497,10 +497,10 @@ To delay the registration of modifiers (such as `KC_LGUI` and `KC_RGUI`, which a
 DEFERRED_EXEC_ENABLE = yes
 ```
 
-To enable *crossover* bilateral combinations (which start on one side of the keyboard and cross over to the other side, such as `RSFT_T(KC_J)` and `LGUI_T(KC_A)` in the word "jam"), add the following line to your `config.h` and define a value: hold times greater than that value will permit crossover bilateral combinations.  For example, if you typed `RSFT_T(KC_J)` and `LGUI_T(KC_A)` faster than the defined value, the keys `KC_J` and `KC_A` would be sent to the computer.  In contrast, if you typed slower than the defined value, the keys `RSFT(KC_A)` would be sent to the computer.
+When you perform a bilateral combination, it's possible that you might be *chording* multiple mods together (holding down more than one modifier key).  All modifier keys in such a *chord* are converted into taps (in the same order that you held them) as part of the bilateral combination.  How many modifier keys you can hold down to create a chord is governed by the following setting, whose default value is 4 (representing the GUI, Alt, Shift, Control modifier keys from one side of the keyboard) and can range between 1 (representing a single modifier) and 8 (representing all possible modifiers from both sides of the keyboard) inclusively.
 
 ```c
-#define BILATERAL_COMBINATIONS_CROSSOVER 75
+#define BILATERAL_COMBINATIONS_CHORDSIZE 4 /* GUI, Alt, Shift, Control */
 ```
 
 To monitor activations in the background, enable debugging, enable the console, enable terminal bell, add `#define DEBUG_ACTION` to `config.h`, and use something like the following shell command line:
