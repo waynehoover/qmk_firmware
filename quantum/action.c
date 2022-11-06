@@ -328,7 +328,7 @@ static struct {
     uint8_t chord_size;
     bool left;
     bool registered;
-#    if (BILATERAL_COMBINATIONS + BILATERAL_COMBINATIONS_CROSSOVER + 0)
+#    if (BILATERAL_COMBINATIONS_SAMESIDED + 0) || (BILATERAL_COMBINATIONS_CROSSOVER + 0)
     uint16_t time;
 #    endif
 #    if (BILATERAL_COMBINATIONS_DEFERMODS + 0)
@@ -441,8 +441,8 @@ static void bilateral_combinations_tap(keyevent_t event) {
     dprint("BILATERAL_COMBINATIONS: tap\n");
     if (bilateral_combinations.active) {
         if (bilateral_combinations_left(event.key) == bilateral_combinations.left) {
-#    if (BILATERAL_COMBINATIONS + 0)
-            if (TIMER_DIFF_16(event.time, bilateral_combinations.time) > BILATERAL_COMBINATIONS) {
+#    if (BILATERAL_COMBINATIONS_SAMESIDED + 0)
+            if (TIMER_DIFF_16(event.time, bilateral_combinations.time) > BILATERAL_COMBINATIONS_SAMESIDED) {
                 bilateral_combinations_register_mods();
                 return; /* skip tap_chord() */
             }

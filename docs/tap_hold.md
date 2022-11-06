@@ -477,10 +477,16 @@ To enable bilateral combinations, add the following to your `config.h`:
 #define BILATERAL_COMBINATIONS
 ```
 
-If `BILATERAL_COMBINATIONS` is defined to a value, hold times greater than that value will permit same hand combinations.  For example:
+To enable *same-sided* combinations (which start on one side of the keyboard and end on the same side, such as `RSFT_T(KC_J)` and `RCTL_T(KC_K)` in the abbreviation "jk" which stands for "just kidding"), add the following line to your `config.h` and define a value: hold times greater than that value will permit same-sided combinations.  For example, if you typed `RSFT_T(KC_J)` and `RCTL_T(KC_K)` faster than the defined value, the keys `KC_J` and `KC_K` would be sent to the computer.  In contrast, if you typed slower than the defined value, the keys `RSFT(KC_K)` would be sent to the computer.
 
 ```c
-#define BILATERAL_COMBINATIONS 500
+#define BILATERAL_COMBINATIONS_SAMESIDED 500
+```
+
+To enable *crossover* bilateral combinations (which start on one side of the keyboard and cross over to the other side, such as `RSFT_T(KC_J)` and `LGUI_T(KC_A)` in the word "jam"), add the following line to your `config.h` and define a value: hold times greater than that value will permit crossover bilateral combinations.  For example, if you typed `RSFT_T(KC_J)` and `LGUI_T(KC_A)` faster than the defined value, the keys `KC_J` and `KC_A` would be sent to the computer.  In contrast, if you typed slower than the defined value, the keys `RSFT(KC_A)` would be sent to the computer.
+
+```c
+#define BILATERAL_COMBINATIONS_CROSSOVER 75
 ```
 
 To delay the registration of modifiers (such as `KC_LGUI` and `KC_RGUI`, which are considered to be "flashing mods" because they suddenly "flash" or pop up the "Start Menu" in Microsoft Windows) during bilateral combinations:
