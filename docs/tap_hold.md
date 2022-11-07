@@ -503,6 +503,12 @@ To delay the registration of modifiers (such as `KC_LGUI` and `KC_RGUI`, which a
 DEFERRED_EXEC_ENABLE = yes
 ```
 
+When combining modifiers with external mouse events (such as Shift-click and Control-click), you might find the registration delay introduced by `BILATERAL_COMBINATIONS_DEFERMODS` to be too great.  The `BILATERAL_COMBINATIONS_EAGERMODS` setting lets you specify a different delay for _the very first_ deferred mods registration, so that your "mod clicks" execute faster and feel more responsive.  In other words, this setting transforms the very first deferred mods into "eager mods".  For example, the following line sets the initial delay to 15 milliseconds.
+
+```c
+#define BILATERAL_COMBINATIONS_EAGERMODS 15
+```
+
 When you perform a bilateral combination, it's possible that you might be *chording* multiple mods together (holding down more than one modifier key).  All modifier keys in such a *chord* are converted into taps (in the same order that you held them) as part of the bilateral combination.  How many modifier keys you can hold down to create a chord is governed by the following setting, whose default value is 4 (representing the GUI, Alt, Shift, Control modifier keys from one side of the keyboard) and can range between 1 (representing a single modifier) and 8 (representing all possible modifiers from both sides of the keyboard) inclusively.
 
 ```c

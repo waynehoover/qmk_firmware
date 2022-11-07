@@ -386,13 +386,13 @@ static void bilateral_combinations_defermods_cancel(void) {
     cancel_deferred_exec(bilateral_combinations.defermods);
 }
 
-static void bilateral_combinations_defermods_schedule(void) {
-    bilateral_combinations.defermods = defer_exec(BILATERAL_COMBINATIONS_DEFERMODS, bilateral_combinations_defermods_callback, NULL);
+static void bilateral_combinations_defermods_schedule(uint32_t delay_ms) {
+    bilateral_combinations.defermods = defer_exec(delay_ms, bilateral_combinations_defermods_callback, NULL);
 }
 
 static void bilateral_combinations_defermods_reschedule(void) {
     bilateral_combinations_defermods_cancel();
-    bilateral_combinations_defermods_schedule();
+    bilateral_combinations_defermods_schedule(BILATERAL_COMBINATIONS_DEFERMODS);
 }
 #    endif
 
@@ -411,7 +411,13 @@ static void bilateral_combinations_hold(action_t action, keyevent_t event, uint8
         bilateral_combinations.time = event.time;
 #    endif
 #    if (BILATERAL_COMBINATIONS_DEFERMODS + 0)
-        bilateral_combinations_defermods_schedule();
+        bilateral_combinations_defermods_schedule(
+#       if (BILATERAL_COMBINATIONS_EAGERMODS + 0)
+            BILATERAL_COMBINATIONS_EAGERMODS
+#       else
+            BILATERAL_COMBINATIONS_DEFERMODS
+#       endif
+        );
 #    endif
     }
     else {
