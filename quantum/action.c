@@ -348,6 +348,7 @@ static bool bilateral_combinations_left(keypos_t key) {
 #    endif
 }
 
+#    if (BILATERAL_COMBINATIONS_SAMESIDED + 0) || (BILATERAL_COMBINATIONS_CROSSOVER + 0)
 static void bilateral_combinations_register_mods(void) {
     dprint("BILATERAL_COMBINATIONS: register_mods\n");
     if (!bilateral_combinations.registered) {
@@ -355,6 +356,7 @@ static void bilateral_combinations_register_mods(void) {
         send_keyboard_report();
     }
 }
+#    endif
 
 static void bilateral_combinations_tap_chord(void) {
     dprint("BILATERAL_COMBINATIONS: register_tap\n");
@@ -374,10 +376,23 @@ static void bilateral_combinations_tap_chord(void) {
 }
 
 #    if (BILATERAL_COMBINATIONS_DEFERMODS + 0)
-static uint32_t bilateral_combinations_defermods(uint32_t trigger_time, void *cb_arg) {
+static uint32_t bilateral_combinations_defermods_callback(uint32_t trigger_time, void *cb_arg) {
     dprint("BILATERAL_COMBINATIONS: defermods\n");
     send_keyboard_report();
     return 0;
+}
+
+static void bilateral_combinations_defermods_cancel(void) {
+    cancel_deferred_exec(bilateral_combinations.defermods);
+}
+
+static void bilateral_combinations_defermods_schedule(void) {
+    bilateral_combinations.defermods = defer_exec(BILATERAL_COMBINATIONS_DEFERMODS, bilateral_combinations_defermods_callback, NULL);
+}
+
+static void bilateral_combinations_defermods_reschedule(void) {
+    bilateral_combinations_defermods_cancel();
+    bilateral_combinations_defermods_schedule();
 }
 #    endif
 
@@ -392,9 +407,11 @@ static void bilateral_combinations_hold(action_t action, keyevent_t event, uint8
         bilateral_combinations.chord_size = 1;
         bilateral_combinations.left = bilateral_combinations_left(event.key);
         bilateral_combinations.registered = false;
+#    if (BILATERAL_COMBINATIONS_SAMESIDED + 0) || (BILATERAL_COMBINATIONS_CROSSOVER + 0)
         bilateral_combinations.time = event.time;
+#    endif
 #    if (BILATERAL_COMBINATIONS_DEFERMODS + 0)
-        bilateral_combinations.defermods = defer_exec(BILATERAL_COMBINATIONS_DEFERMODS, bilateral_combinations_defermods, NULL);
+        bilateral_combinations_defermods_schedule();
 #    endif
     }
     else {
@@ -405,8 +422,12 @@ static void bilateral_combinations_hold(action_t action, keyevent_t event, uint8
                 bilateral_combinations.chord_mods[bilateral_combinations.chord_size] = mods;
                 bilateral_combinations.chord_size++;
             }
+#    if (BILATERAL_COMBINATIONS_DEFERMODS + 0)
+            bilateral_combinations_defermods_reschedule();
+#    else
             register_mods(mods);
             return; /* skip add_mods() */
+#    endif
         }
         /* new key being held is on the other side of the keyboard: make it a tap */
         else {
@@ -425,8 +446,7 @@ static void bilateral_combinations_release(action_t action, keyevent_t event, ui
         if (KEYEQ(event.key, bilateral_combinations.key)) {
             bilateral_combinations.active = false;
 #    if (BILATERAL_COMBINATIONS_DEFERMODS + 0)
-            cancel_deferred_exec(bilateral_combinations.defermods);
-            bilateral_combinations.defermods = INVALID_DEFERRED_TOKEN;
+            bilateral_combinations_defermods_cancel();
 #    endif
         }
         /* different key but same modifier: ignore release */
