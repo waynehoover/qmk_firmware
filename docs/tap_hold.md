@@ -509,6 +509,12 @@ When combining modifiers with external mouse events (such as Shift-click and Con
 #define BILATERAL_COMBINATIONS_EAGERMODS 15
 ```
 
+However, you might not want to apply `BILATERAL_COMBINATIONS_EAGERMODS` for all modifiers alike.  For instance, Control-click is a useful shortcut in Web browsers (to open a hyperlink in a new browser tab instead of the current one) but GUI-click currently is not.  The `BILATERAL_COMBINATIONS_EAGERMASK` setting lets you specify which modifiers should be considered as "eager mods"; mods that don't match this mask will be treated as normal deferred mods.  For example, the following line sets this mask to match all modifiers keys except the GUI ones.
+
+```c
+#define BILATERAL_COMBINATIONS_EAGERMASK (~MOD_MASK_GUI) /* all mods except GUI */
+```
+
 When you perform a bilateral combination, it's possible that you might be *chording* multiple mods together (holding down more than one modifier key).  All modifier keys in such a *chord* are converted into taps (in the same order that you held them) as part of the bilateral combination.  How many modifier keys you can hold down to create a chord is governed by the following setting, whose default value is 4 (representing the GUI, Alt, Shift, Control modifier keys from one side of the keyboard) and can range between 1 (representing a single modifier) and 8 (representing all possible modifiers from both sides of the keyboard) inclusively.
 
 ```c

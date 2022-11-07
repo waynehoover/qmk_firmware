@@ -411,13 +411,13 @@ static void bilateral_combinations_hold(action_t action, keyevent_t event, uint8
         bilateral_combinations.time = event.time;
 #    endif
 #    if (BILATERAL_COMBINATIONS_DEFERMODS + 0)
-        bilateral_combinations_defermods_schedule(
-#       if (BILATERAL_COMBINATIONS_EAGERMODS + 0)
-            BILATERAL_COMBINATIONS_EAGERMODS
-#       else
-            BILATERAL_COMBINATIONS_DEFERMODS
+        uint32_t schedule = BILATERAL_COMBINATIONS_DEFERMODS;
+#       if ((BILATERAL_COMBINATIONS_EAGERMODS + 0) && (BILATERAL_COMBINATIONS_EAGERMASK + 0))
+            if (mods & BILATERAL_COMBINATIONS_EAGERMASK) {
+                schedule = BILATERAL_COMBINATIONS_EAGERMODS;
+            }
 #       endif
-        );
+        bilateral_combinations_defermods_schedule(schedule);
 #    endif
     }
     else {
