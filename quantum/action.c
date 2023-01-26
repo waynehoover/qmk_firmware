@@ -525,7 +525,9 @@ static void bilateral_combinations_tap(keyevent_t event) {
 #    endif
         if (threshold > 0) {
 #    if (BILATERAL_COMBINATIONS_DEFERMODS + 0) && (BILATERAL_COMBINATIONS_DEFERMASK + 0)
-            if (bilateral_combinations.chord_size == 1 && (bilateral_combinations.chord_mods & BILATERAL_COMBINATIONS_DEFERMASK)) {
+            if ((bilateral_combinations.chord_mods & BILATERAL_COMBINATIONS_DEFERMASK)
+                && bilateral_combinations.chord_mods == bilateral_combinations.mods)
+            {
                 threshold = MAX(threshold, BILATERAL_COMBINATIONS_DEFERMODS);
             }
 #    endif
