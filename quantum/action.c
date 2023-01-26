@@ -396,8 +396,7 @@ static void bilateral_combinations_register_mods(void) {
     dprint("BILATERAL_COMBINATIONS: register_mods\n");
     if (!bilateral_combinations.registered) {
         bilateral_combinations.registered = true;
-        add_mods(bilateral_combinations.chord_mods);
-        send_keyboard_report();
+        register_mods(bilateral_combinations.chord_mods);
     }
 }
 #    endif
