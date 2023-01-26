@@ -365,8 +365,8 @@ static struct {
     bool active;
     keypos_t key;
     uint8_t code;
+    uint8_t mods;
     uint8_t chord_taps[BILATERAL_COMBINATIONS_CHORDSIZE];
-    uint8_t chord_mods[BILATERAL_COMBINATIONS_CHORDSIZE];
     uint8_t chord_size;
     bool left;
     bool registered;
@@ -406,9 +406,7 @@ static void bilateral_combinations_tap_chord(void) {
         bilateral_combinations.registered = true;
 
         /* cancel mods added by chord keys */
-        for (uint8_t k = 0; k < bilateral_combinations.chord_size; k++) {
-            del_mods(bilateral_combinations.chord_mods[k]);
-        }
+        clear_mods();
 
         /* replay chord as individual taps */
         for (uint8_t k = 0; k < bilateral_combinations.chord_size; k++) {
@@ -444,8 +442,8 @@ static void bilateral_combinations_hold(action_t action, keyevent_t event, uint8
         bilateral_combinations.active = true;
         bilateral_combinations.key = event.key;
         bilateral_combinations.code = action.key.code;
+        bilateral_combinations.mods = mods;
         bilateral_combinations.chord_taps[0] = action.layer_tap.code;
-        bilateral_combinations.chord_mods[0] = mods;
         bilateral_combinations.chord_size = 1;
         bilateral_combinations.left = bilateral_combinations_left(event.key);
         bilateral_combinations.registered = false;
@@ -467,7 +465,6 @@ static void bilateral_combinations_hold(action_t action, keyevent_t event, uint8
         if (bilateral_combinations_left(event.key) == bilateral_combinations.left) {
             if (!bilateral_combinations.registered && bilateral_combinations.chord_size < BILATERAL_COMBINATIONS_CHORDSIZE) {
                 bilateral_combinations.chord_taps[bilateral_combinations.chord_size] = action.layer_tap.code;
-                bilateral_combinations.chord_mods[bilateral_combinations.chord_size] = mods;
                 bilateral_combinations.chord_size++;
             }
 #    if (BILATERAL_COMBINATIONS_DEFERMODS + 0)
@@ -498,7 +495,7 @@ static void bilateral_combinations_release(action_t action, keyevent_t event, ui
 #    endif
         }
         /* different key but same modifier: ignore release */
-        else if (mods == bilateral_combinations.chord_mods[0]) {
+        else if (mods == bilateral_combinations.mods) {
             return; /* skip unregister_mods() */
         }
     }
