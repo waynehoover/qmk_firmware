@@ -519,20 +519,26 @@ static void bilateral_combinations_tap(keyevent_t event) {
         uint16_t threshold = 0;
         if (bilateral_combinations_left(event.key) == bilateral_combinations.left) {
 #    if (BILATERAL_COMBINATIONS_SAMESIDED + 0)
-            threshold = BILATERAL_COMBINATIONS_SAMESIDED;
+            threshold += BILATERAL_COMBINATIONS_SAMESIDED;
 #    endif
         }
 #    if (BILATERAL_COMBINATIONS_CROSSOVER + 0)
         else {
-            threshold = BILATERAL_COMBINATIONS_CROSSOVER;
+            threshold += BILATERAL_COMBINATIONS_CROSSOVER;
         }
 #    endif
-        if (threshold > 0 && TIMER_DIFF_16(event.time, bilateral_combinations.time) > threshold) {
-            bilateral_combinations_register_mods();
+        if (threshold > 0) {
+#    if ((BILATERAL_COMBINATIONS_DEFERMODS + 0) && (BILATERAL_COMBINATIONS_EAGERMODS + 0) && (BILATERAL_COMBINATIONS_EAGERMASK + 0))
+            if (bilateral_combinations.chord_size == 1 && !(bilateral_combinations.chord_mods & BILATERAL_COMBINATIONS_EAGERMASK)) {
+                threshold = MAX(threshold, BILATERAL_COMBINATIONS_DEFERMODS);
+            }
+#    endif
+            if (TIMER_DIFF_16(event.time, bilateral_combinations.time) > threshold) {
+                bilateral_combinations_register_mods();
+                return; /* skip tap_chord() */
+            }
         }
-        else {
-            bilateral_combinations_tap_chord();
-        }
+        bilateral_combinations_tap_chord();
     }
 }
 #endif
