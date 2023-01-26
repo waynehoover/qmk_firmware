@@ -427,16 +427,24 @@ static uint32_t bilateral_combinations_defermods_callback(uint32_t trigger_time,
 }
 
 static void bilateral_combinations_defermods_cancel(void) {
-    cancel_deferred_exec(bilateral_combinations.defermods);
+    if (bilateral_combinations.defermods != INVALID_DEFERRED_TOKEN) {
+        cancel_deferred_exec(bilateral_combinations.defermods);
+        bilateral_combinations.defermods = INVALID_DEFERRED_TOKEN;
+    }
 }
 
-static void bilateral_combinations_defermods_schedule(uint32_t delay_ms) {
-    bilateral_combinations.defermods = defer_exec(delay_ms, bilateral_combinations_defermods_callback, NULL);
-}
-
-static void bilateral_combinations_defermods_reschedule(void) {
+static void bilateral_combinations_defermods_schedule(void) {
     bilateral_combinations_defermods_cancel();
-    bilateral_combinations_defermods_schedule(BILATERAL_COMBINATIONS_DEFERMODS);
+
+    uint32_t delay_ms;
+    if (bilateral_combinations.chord_mods & BILATERAL_COMBINATIONS_DEFERMASK) {
+        delay_ms = BILATERAL_COMBINATIONS_DEFERMODS;
+    }
+    else {
+        delay_ms = 1; /* defer to the next cycle */
+    }
+
+    bilateral_combinations.defermods = defer_exec(delay_ms, bilateral_combinations_defermods_callback, NULL);
 }
 #    endif
 
@@ -456,12 +464,7 @@ static void bilateral_combinations_hold(action_t action, keyevent_t event, uint8
         bilateral_combinations.time = event.time;
 #    endif
 #    if (BILATERAL_COMBINATIONS_DEFERMODS + 0) && (BILATERAL_COMBINATIONS_DEFERMASK + 0)
-        if (mods & BILATERAL_COMBINATIONS_DEFERMASK) {
-            bilateral_combinations_defermods_schedule(BILATERAL_COMBINATIONS_DEFERMODS);
-        }
-        else {
-            bilateral_combinations_defermods_schedule(1 /* defer to the next cycle */);
-        }
+        bilateral_combinations_defermods_schedule();
         return; /* skip add_mods() */
 #    endif
     }
@@ -474,7 +477,7 @@ static void bilateral_combinations_hold(action_t action, keyevent_t event, uint8
                 bilateral_combinations.chord_size++;
             }
 #    if (BILATERAL_COMBINATIONS_DEFERMODS + 0)
-            bilateral_combinations_defermods_reschedule();
+            bilateral_combinations_defermods_schedule();
 #    else
             register_mods(mods);
             return; /* skip add_mods() */
