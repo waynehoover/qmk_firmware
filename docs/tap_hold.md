@@ -471,10 +471,18 @@ The last mod-tap hold will be converted to the corresponding mod-tap tap if anot
 
 This option can be used to prevent accidental modifier combinations with mod-tap, in particular those caused by rollover on home row mods.  As only the last mod-tap hold is affected, it should be enabled after adjusting settings and typing style so that accidental mods happen only occasionally, e.g. with a long enough tapping term, ignore mod tap interrupt, and deliberately brief keypresses.
 
-To enable bilateral combinations, add the following to your `config.h`:
+To enable bilateral combinations:
+
+1. Add the following line to your `config.h` file:
 
 ```c
 #define BILATERAL_COMBINATIONS
+```
+
+2. Add the following line to your `rules.mk` file to enable QMK's deferred execution facility.
+
+```make
+DEFERRED_EXEC_ENABLE = yes
 ```
 
 To enable *same-sided* combinations (which start on one side of the keyboard and end on the same side, such as `RSFT_T(KC_J)` and `RCTL_T(KC_K)` in the abbreviation "jk" which stands for "just kidding"), add the following line to your `config.h` and define a value: hold times greater than that value will permit same-sided combinations.  For example, if you typed `RSFT_T(KC_J)` and `RCTL_T(KC_K)` faster than the defined value, the keys `KC_J` and `KC_K` would be sent to the computer.  In contrast, if you typed slower than the defined value, the keys `RSFT(KC_K)` would be sent to the computer.
@@ -489,30 +497,18 @@ To enable *crossover* bilateral combinations (which start on one side of the key
 #define BILATERAL_COMBINATIONS_CROSSOVER 75
 ```
 
-To delay the registration of modifiers (such as `KC_LGUI` and `KC_RGUI`, which are considered to be "flashing mods" because they suddenly "flash" or pop up the "Start Menu" in Microsoft Windows) during bilateral combinations:
+To delay the registration of certain modifiers (such as `KC_LGUI` and `KC_RGUI`, which are considered to be "flashing mods" because they suddenly "flash" or pop up the "Start Menu" in Microsoft Windows) during bilateral combinations, you can define a `BILATERAL_COMBINATIONS_DEFERMASK` setting specifying which modifiers should be delayed, and a `BILATERAL_COMBINATIONS_DEFERMODS` setting specifying how long that delay (measured in milliseconds) should be.
 
-1. Add the following line to your `config.h` and define a timeout value (measured in milliseconds).  Hold times greater than this value will permit modifiers to be registered.
+1. Add the following line to your `config.h` and define a bitwise mask that matches the modifiers you want to delay.  For example, here we are defining the mask to only match the GUI and ALT modifiers.
+
+```c
+#define BILATERAL_COMBINATIONS_DEFERMASK (MOD_MASK_GUI|MOD_MASK_ALT) /* GUI and ALT modifiers */
+```
+
+2. Add the following line to your `config.h` and define a timeout value (measured in milliseconds) that specifies how long modifiers matched by `BILATERAL_COMBINATIONS_DEFERMASK` should be delayed.  For example, here we are defining the timeout to be 100 milliseconds long.
 
 ```c
 #define BILATERAL_COMBINATIONS_DEFERMODS 100
-```
-
-2. Add the following line to your `rules.mk` file to enable QMK's deferred execution facility, which is needed by the `BILATERAL_COMBINATIONS_DEFERMODS` setting mentioned above.
-
-```make
-DEFERRED_EXEC_ENABLE = yes
-```
-
-When combining modifiers with external mouse events (such as Shift-click and Control-click), you might find the registration delay introduced by `BILATERAL_COMBINATIONS_DEFERMODS` to be too great.  The `BILATERAL_COMBINATIONS_EAGERMODS` setting lets you specify a different delay for _the very first_ deferred mods registration, so that your "mod clicks" execute faster and feel more responsive.  In other words, this setting transforms the very first deferred mods into "eager mods".  For example, the following line sets the initial delay to 15 milliseconds.
-
-```c
-#define BILATERAL_COMBINATIONS_EAGERMODS 15
-```
-
-However, you might not want to apply `BILATERAL_COMBINATIONS_EAGERMODS` for all modifiers alike.  For instance, Control-click is a useful shortcut in Web browsers (to open a hyperlink in a new browser tab instead of the current one) but GUI-click currently is not.  The `BILATERAL_COMBINATIONS_EAGERMASK` setting lets you specify which modifiers should be considered as "eager mods"; mods that don't match this mask will be treated as normal deferred mods.  For example, the following line sets this mask to match all modifiers keys except the GUI ones.
-
-```c
-#define BILATERAL_COMBINATIONS_EAGERMASK (~MOD_MASK_GUI) /* all mods except GUI */
 ```
 
 When you perform a bilateral combination, it's possible that you might be *chording* multiple mods together (holding down more than one modifier key).  All modifier keys in such a *chord* are converted into taps (in the same order that you held them) as part of the bilateral combination.  How many modifier keys you can hold down to create a chord is governed by the following setting, whose default value is 4 (representing the GUI, Alt, Shift, Control modifier keys from one side of the keyboard) and can range between 1 (representing a single modifier) and 8 (representing all possible modifiers from both sides of the keyboard) inclusively.

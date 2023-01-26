@@ -456,18 +456,14 @@ static void bilateral_combinations_hold(action_t action, keyevent_t event, uint8
 #    if (BILATERAL_COMBINATIONS_SAMESIDED + 0) || (BILATERAL_COMBINATIONS_CROSSOVER + 0)
         bilateral_combinations.time = event.time;
 #    endif
-#    if (BILATERAL_COMBINATIONS_DEFERMODS + 0)
-#       if ((BILATERAL_COMBINATIONS_EAGERMODS + 0) && (BILATERAL_COMBINATIONS_EAGERMASK + 0))
-            if (mods & BILATERAL_COMBINATIONS_EAGERMASK) {
-                bilateral_combinations_defermods_schedule(BILATERAL_COMBINATIONS_EAGERMODS);
-            }
-            else {
-                bilateral_combinations_defermods_schedule(BILATERAL_COMBINATIONS_DEFERMODS);
-                return; /* skip add_mods() */
-            }
-#       else
+#    if (BILATERAL_COMBINATIONS_DEFERMODS + 0) && (BILATERAL_COMBINATIONS_DEFERMASK + 0)
+        if (mods & BILATERAL_COMBINATIONS_DEFERMASK) {
             bilateral_combinations_defermods_schedule(BILATERAL_COMBINATIONS_DEFERMODS);
-#       endif
+        }
+        else {
+            bilateral_combinations_defermods_schedule(1 /* defer to the next cycle */);
+        }
+        return; /* skip add_mods() */
 #    endif
     }
     else {
@@ -528,8 +524,8 @@ static void bilateral_combinations_tap(keyevent_t event) {
         }
 #    endif
         if (threshold > 0) {
-#    if ((BILATERAL_COMBINATIONS_DEFERMODS + 0) && (BILATERAL_COMBINATIONS_EAGERMODS + 0) && (BILATERAL_COMBINATIONS_EAGERMASK + 0))
-            if (bilateral_combinations.chord_size == 1 && !(bilateral_combinations.chord_mods & BILATERAL_COMBINATIONS_EAGERMASK)) {
+#    if (BILATERAL_COMBINATIONS_DEFERMODS + 0) && (BILATERAL_COMBINATIONS_DEFERMASK + 0)
+            if (bilateral_combinations.chord_size == 1 && (bilateral_combinations.chord_mods & BILATERAL_COMBINATIONS_DEFERMASK)) {
                 threshold = MAX(threshold, BILATERAL_COMBINATIONS_DEFERMODS);
             }
 #    endif
