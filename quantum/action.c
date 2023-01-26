@@ -367,6 +367,7 @@ static struct {
     uint8_t code;
     uint8_t mods;
     uint8_t chord_taps[BILATERAL_COMBINATIONS_CHORDSIZE];
+    uint8_t chord_mods;
     uint8_t chord_size;
     bool left;
     bool registered;
@@ -395,6 +396,7 @@ static void bilateral_combinations_register_mods(void) {
     dprint("BILATERAL_COMBINATIONS: register_mods\n");
     if (!bilateral_combinations.registered) {
         bilateral_combinations.registered = true;
+        add_mods(bilateral_combinations.chord_mods);
         send_keyboard_report();
     }
 }
@@ -418,6 +420,9 @@ static void bilateral_combinations_tap_chord(void) {
 #    if (BILATERAL_COMBINATIONS_DEFERMODS + 0)
 static uint32_t bilateral_combinations_defermods_callback(uint32_t trigger_time, void *cb_arg) {
     dprint("BILATERAL_COMBINATIONS: defermods\n");
+    if (!bilateral_combinations.registered) {
+        add_mods(bilateral_combinations.chord_mods);
+    }
     send_keyboard_report();
     return 0;
 }
@@ -444,6 +449,7 @@ static void bilateral_combinations_hold(action_t action, keyevent_t event, uint8
         bilateral_combinations.code = action.key.code;
         bilateral_combinations.mods = mods;
         bilateral_combinations.chord_taps[0] = action.layer_tap.code;
+        bilateral_combinations.chord_mods = mods;
         bilateral_combinations.chord_size = 1;
         bilateral_combinations.left = bilateral_combinations_left(event.key);
         bilateral_combinations.registered = false;
@@ -451,13 +457,17 @@ static void bilateral_combinations_hold(action_t action, keyevent_t event, uint8
         bilateral_combinations.time = event.time;
 #    endif
 #    if (BILATERAL_COMBINATIONS_DEFERMODS + 0)
-        uint32_t schedule = BILATERAL_COMBINATIONS_DEFERMODS;
 #       if ((BILATERAL_COMBINATIONS_EAGERMODS + 0) && (BILATERAL_COMBINATIONS_EAGERMASK + 0))
             if (mods & BILATERAL_COMBINATIONS_EAGERMASK) {
-                schedule = BILATERAL_COMBINATIONS_EAGERMODS;
+                bilateral_combinations_defermods_schedule(BILATERAL_COMBINATIONS_EAGERMODS);
             }
+            else {
+                bilateral_combinations_defermods_schedule(BILATERAL_COMBINATIONS_DEFERMODS);
+                return; /* skip add_mods() */
+            }
+#       else
+            bilateral_combinations_defermods_schedule(BILATERAL_COMBINATIONS_DEFERMODS);
 #       endif
-        bilateral_combinations_defermods_schedule(schedule);
 #    endif
     }
     else {
@@ -465,6 +475,7 @@ static void bilateral_combinations_hold(action_t action, keyevent_t event, uint8
         if (bilateral_combinations_left(event.key) == bilateral_combinations.left) {
             if (!bilateral_combinations.registered && bilateral_combinations.chord_size < BILATERAL_COMBINATIONS_CHORDSIZE) {
                 bilateral_combinations.chord_taps[bilateral_combinations.chord_size] = action.layer_tap.code;
+                bilateral_combinations.chord_mods |= mods;
                 bilateral_combinations.chord_size++;
             }
 #    if (BILATERAL_COMBINATIONS_DEFERMODS + 0)
