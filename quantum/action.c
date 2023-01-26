@@ -516,23 +516,23 @@ static void bilateral_combinations_release(action_t action, keyevent_t event, ui
 static void bilateral_combinations_tap(keyevent_t event) {
     dprint("BILATERAL_COMBINATIONS: tap\n");
     if (bilateral_combinations.active) {
+        uint16_t threshold = 0;
         if (bilateral_combinations_left(event.key) == bilateral_combinations.left) {
 #    if (BILATERAL_COMBINATIONS_SAMESIDED + 0)
-            if (TIMER_DIFF_16(event.time, bilateral_combinations.time) > BILATERAL_COMBINATIONS_SAMESIDED) {
-                bilateral_combinations_register_mods();
-                return; /* skip tap_chord() */
-            }
+            threshold = BILATERAL_COMBINATIONS_SAMESIDED;
 #    endif
         }
 #    if (BILATERAL_COMBINATIONS_CROSSOVER + 0)
         else {
-            if (TIMER_DIFF_16(event.time, bilateral_combinations.time) > BILATERAL_COMBINATIONS_CROSSOVER) {
-                bilateral_combinations_register_mods();
-                return; /* skip tap_chord() */
-            }
+            threshold = BILATERAL_COMBINATIONS_CROSSOVER;
         }
 #    endif
-        bilateral_combinations_tap_chord();
+        if (threshold > 0 && TIMER_DIFF_16(event.time, bilateral_combinations.time) > threshold) {
+            bilateral_combinations_register_mods();
+        }
+        else {
+            bilateral_combinations_tap_chord();
+        }
     }
 }
 #endif
