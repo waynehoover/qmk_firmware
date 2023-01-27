@@ -507,6 +507,8 @@ static void bilateral_combinations_release(action_t action, keyevent_t event, ui
         else if (mods == bilateral_combinations.mods) {
             return; /* skip unregister_mods() */
         }
+
+        bilateral_combinations.chord_mods &= ~mods;
     }
     unregister_mods(mods);
 }
