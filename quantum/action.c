@@ -436,20 +436,17 @@ static void bilateral_combinations_defermods_cancel(void) {
     }
 }
 
-static void bilateral_combinations_defermods_schedule(void) {
+static void bilateral_combinations_defermods_schedule(uint8_t mods) {
+    if (!(mods & BILATERAL_COMBINATIONS_DEFERMASK)) {
+        register_mods(mods);
+        return;
+    }
+
     if (bilateral_combinations.defermods != INVALID_DEFERRED_TOKEN) {
         return; /* piggyback on already scheduled callback */
     }
 
-    uint32_t delay_ms;
-    if (bilateral_combinations.chord_mods & BILATERAL_COMBINATIONS_DEFERMASK) {
-        delay_ms = BILATERAL_COMBINATIONS_DEFERMODS;
-    }
-    else {
-        delay_ms = 1; /* defer to the next cycle */
-    }
-
-    bilateral_combinations.defermods = defer_exec(delay_ms, bilateral_combinations_defermods_callback, NULL);
+    bilateral_combinations.defermods = defer_exec(BILATERAL_COMBINATIONS_DEFERMODS, bilateral_combinations_defermods_callback, NULL);
 }
 
 static void bilateral_combinations_hold(action_t action, keyevent_t event, uint8_t mods) {
@@ -484,7 +481,7 @@ static void bilateral_combinations_hold(action_t action, keyevent_t event, uint8
             return; /* skip defermods_schedule() */
         }
     }
-    bilateral_combinations_defermods_schedule();
+    bilateral_combinations_defermods_schedule(mods);
 }
 
 static void bilateral_combinations_release(action_t action, keyevent_t event, uint8_t mods) {
