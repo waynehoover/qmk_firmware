@@ -471,6 +471,8 @@ The last mod-tap hold will be converted to the corresponding mod-tap tap if anot
 
 This option can be used to prevent accidental modifier combinations with mod-tap, in particular those caused by rollover on home row mods.  As only the last mod-tap hold is affected, it should be enabled after adjusting settings and typing style so that accidental mods happen only occasionally, e.g. with a long enough tapping term, ignore mod tap interrupt, and deliberately brief keypresses.
 
+When you perform a bilateral combination, it's possible that you might be *chording* multiple mods together (holding down more than one modifier key simultaneously).  All modifier keys in such a *chord* are converted into taps (in the same order that you held them) as part of the bilateral combination.  At maximum, you can hold down 8 keys simultaneously (representing all possible modifiers from both sides of the keyboard: `(GASC)R(GASC)L`) to construct a chord.
+
 To enable bilateral combinations:
 
 1. Add the following line to your `config.h` file:
@@ -509,12 +511,6 @@ To delay the registration of certain modifiers (such as `KC_LGUI` and `KC_RGUI`,
 
 ```c
 #define BILATERAL_COMBINATIONS_DEFERMODS 100
-```
-
-When you perform a bilateral combination, it's possible that you might be *chording* multiple mods together (holding down more than one modifier key).  All modifier keys in such a *chord* are converted into taps (in the same order that you held them) as part of the bilateral combination.  How many modifier keys you can hold down to create a chord is governed by the following setting, whose default value is 4 (representing the GUI, Alt, Shift, Control modifier keys from one side of the keyboard) and can range between 1 (representing a single modifier) and 8 (representing all possible modifiers from both sides of the keyboard) inclusively.
-
-```c
-#define BILATERAL_COMBINATIONS_CHORDSIZE 4 /* GUI, Alt, Shift, Control */
 ```
 
 To monitor activations in the background, enable debugging, enable the console, enable terminal bell, add `#define DEBUG_ACTION` to `config.h`, and use something like the following shell command line:

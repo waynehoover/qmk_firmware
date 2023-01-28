@@ -353,14 +353,7 @@ void register_button(bool pressed, enum mouse_buttons button) {
 #endif
 
 #ifdef BILATERAL_COMBINATIONS
-#    ifndef BILATERAL_COMBINATIONS_CHORDSIZE
-#        define BILATERAL_COMBINATIONS_CHORDSIZE 4 /* GUI, Alt, Shift, Control */
-#    endif
-#    if (BILATERAL_COMBINATIONS_CHORDSIZE < 1)
-#        error "BILATERAL_COMBINATIONS_CHORDSIZE must be at least 1"
-#    elif (BILATERAL_COMBINATIONS_CHORDSIZE > 8)
-#        error "BILATERAL_COMBINATIONS_CHORDSIZE must be at most 8" /* modifier state is stored as a single byte in the format (GASC)R(GASC)L */
-#    endif
+#    define BILATERAL_COMBINATIONS_CHORD_SIZE_MAX 8 /* modifier state is stored as a single byte in the format (GASC)R(GASC)L */
 #    ifndef BILATERAL_COMBINATIONS_SAMESIDED
 #        define BILATERAL_COMBINATIONS_SAMESIDED (~0) /* infinity */
 #    endif
@@ -378,7 +371,7 @@ static struct {
     keypos_t key;
     uint8_t code;
     uint8_t mods;
-    uint8_t chord_taps[BILATERAL_COMBINATIONS_CHORDSIZE];
+    uint16_t chord_taps[BILATERAL_COMBINATIONS_CHORD_SIZE_MAX];
     uint8_t chord_mods;
     uint8_t chord_size;
     bool left;
@@ -399,6 +392,35 @@ static bool bilateral_combinations_left(keypos_t key) {
 #    endif
 }
 
+#define BILATERAL_COMBINATIONS_CHORD(mods, code) ((mods << 8) | code)
+#define BILATERAL_COMBINATIONS_CHORD_MODS QK_MODS_GET_MODS
+#define BILATERAL_COMBINATIONS_CHORD_CODE QK_MODS_GET_BASIC_KEYCODE
+
+static void bilateral_combinations_chord_add(uint8_t mods, uint8_t code) {
+    if (bilateral_combinations.chord_size < BILATERAL_COMBINATIONS_CHORD_SIZE_MAX) {
+        bilateral_combinations.chord_taps[bilateral_combinations.chord_size++] = BILATERAL_COMBINATIONS_CHORD(mods, code);
+    }
+    bilateral_combinations.chord_mods |= mods;
+}
+
+static void bilateral_combinations_chord_del(uint8_t mods, uint8_t code) {
+    bool found = false;
+    for (uint8_t k = 0; k < bilateral_combinations.chord_size; k++) {
+        uint16_t tap = bilateral_combinations.chord_taps[k];
+        if (found) {
+            /* shift later taps in the buffer to the left */
+            bilateral_combinations.chord_taps[k - 1] = tap;
+        }
+        else if (tap == BILATERAL_COMBINATIONS_CHORD(mods, code)) {
+            found = true;
+        }
+    }
+    if (found) {
+        bilateral_combinations.chord_size--;
+    }
+    bilateral_combinations.chord_mods &= ~mods;
+}
+
 static void bilateral_combinations_register_mods(void) {
     dprint("BILATERAL_COMBINATIONS: register_mods\n");
     if (!bilateral_combinations.registered) {
@@ -417,7 +439,7 @@ static void bilateral_combinations_tap_chord(void) {
 
         /* replay chord as individual taps */
         for (uint8_t k = 0; k < bilateral_combinations.chord_size; k++) {
-            tap_code(bilateral_combinations.chord_taps[k]);
+            tap_code(BILATERAL_COMBINATIONS_CHORD_CODE(bilateral_combinations.chord_taps[k]));
         }
     }
 }
@@ -456,30 +478,20 @@ static void bilateral_combinations_hold(action_t action, keyevent_t event, uint8
         bilateral_combinations.key = event.key;
         bilateral_combinations.code = action.key.code;
         bilateral_combinations.mods = mods;
-        bilateral_combinations.chord_taps[0] = action.layer_tap.code;
-        bilateral_combinations.chord_mods = mods;
-        bilateral_combinations.chord_size = 1;
+        bilateral_combinations.chord_mods = 0; /* for chord_add() */
+        bilateral_combinations.chord_size = 0; /* for chord_add() */
         bilateral_combinations.left = bilateral_combinations_left(event.key);
         bilateral_combinations.registered = false;
         bilateral_combinations.time = event.time;
     }
-    /* new key being held is on the same side: register it now for mouse usage */
-    else if (bilateral_combinations_left(event.key) == bilateral_combinations.left) {
-        bilateral_combinations.chord_mods |= mods;
-
-        if (!bilateral_combinations.registered && bilateral_combinations.chord_size < BILATERAL_COMBINATIONS_CHORDSIZE) {
-            bilateral_combinations.chord_taps[bilateral_combinations.chord_size] = action.layer_tap.code;
-            bilateral_combinations.chord_size++;
-        }
-    }
     /* new key being held is on the other side of the keyboard: make it a tap! */
-    else {
+    else if (bilateral_combinations_left(event.key) != bilateral_combinations.left) {
         bilateral_combinations_tap_chord();
         tap_code(action.layer_tap.code);
         bilateral_combinations_defermods_cancel();
         return; /* skip defermods_schedule() */
     }
-
+    bilateral_combinations_chord_add(mods, action.layer_tap.code);
     bilateral_combinations_defermods_schedule(mods);
 }
 
@@ -496,7 +508,7 @@ static void bilateral_combinations_release(action_t action, keyevent_t event, ui
             return; /* skip unregister_mods() */
         }
 
-        bilateral_combinations.chord_mods &= ~mods;
+        bilateral_combinations_chord_del(mods, action.layer_tap.code);
     }
     unregister_mods(mods);
 }
