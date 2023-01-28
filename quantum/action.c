@@ -469,9 +469,10 @@ static void bilateral_combinations_hold(action_t action, keyevent_t event, uint8
     else {
         /* new key being held is on the same side: register it now for mouse usage */
         if (bilateral_combinations_left(event.key) == bilateral_combinations.left) {
+            bilateral_combinations.chord_mods |= mods;
+
             if (!bilateral_combinations.registered && bilateral_combinations.chord_size < BILATERAL_COMBINATIONS_CHORDSIZE) {
                 bilateral_combinations.chord_taps[bilateral_combinations.chord_size] = action.layer_tap.code;
-                bilateral_combinations.chord_mods |= mods;
                 bilateral_combinations.chord_size++;
             }
         }
