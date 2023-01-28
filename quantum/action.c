@@ -424,10 +424,8 @@ static void bilateral_combinations_tap_chord(void) {
 
 static uint32_t bilateral_combinations_defermods_callback(uint32_t trigger_time, void *cb_arg) {
     dprint("BILATERAL_COMBINATIONS: defermods\n");
-    if (!bilateral_combinations.registered) {
-        add_mods(bilateral_combinations.chord_mods);
-    }
-    send_keyboard_report();
+    register_mods(bilateral_combinations.chord_mods);
+    bilateral_combinations.defermods = INVALID_DEFERRED_TOKEN;
     return 0;
 }
 
@@ -439,7 +437,9 @@ static void bilateral_combinations_defermods_cancel(void) {
 }
 
 static void bilateral_combinations_defermods_schedule(void) {
-    bilateral_combinations_defermods_cancel();
+    if (bilateral_combinations.defermods != INVALID_DEFERRED_TOKEN) {
+        return; /* piggyback on already scheduled callback */
+    }
 
     uint32_t delay_ms;
     if (bilateral_combinations.chord_mods & BILATERAL_COMBINATIONS_DEFERMASK) {
@@ -465,8 +465,6 @@ static void bilateral_combinations_hold(action_t action, keyevent_t event, uint8
         bilateral_combinations.left = bilateral_combinations_left(event.key);
         bilateral_combinations.registered = false;
         bilateral_combinations.time = event.time;
-        bilateral_combinations_defermods_schedule();
-        return; /* skip add_mods() */
     }
     else {
         /* new key being held is on the same side: register it now for mouse usage */
@@ -476,16 +474,16 @@ static void bilateral_combinations_hold(action_t action, keyevent_t event, uint8
                 bilateral_combinations.chord_mods |= mods;
                 bilateral_combinations.chord_size++;
             }
-            bilateral_combinations_defermods_schedule();
         }
         /* new key being held is on the other side of the keyboard: make it a tap */
         else {
             bilateral_combinations_tap_chord();
             tap_code(action.layer_tap.code);
-            return; /* skip add_mods() */
+            bilateral_combinations_defermods_cancel();
+            return; /* skip defermods_schedule() */
         }
     }
-    add_mods(mods);
+    bilateral_combinations_defermods_schedule();
 }
 
 static void bilateral_combinations_release(action_t action, keyevent_t event, uint8_t mods) {
