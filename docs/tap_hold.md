@@ -490,27 +490,27 @@ DEFERRED_EXEC_ENABLE = yes
 To enable *same-sided* combinations (which start on one side of the keyboard and end on the same side, such as `RSFT_T(KC_J)` and `RCTL_T(KC_K)` in the abbreviation "jk" which stands for "just kidding"), add the following line to your `config.h` and define a value: hold times greater than that value will permit same-sided combinations.  For example, if you typed `RSFT_T(KC_J)` and `RCTL_T(KC_K)` faster than the defined value, the keys `KC_J` and `KC_K` would be sent to the computer.  In contrast, if you typed slower than the defined value, the keys `RSFT(KC_K)` would be sent to the computer.
 
 ```c
-#define BILATERAL_COMBINATIONS_SAMESIDED 500
+#define BILATERAL_COMBINATIONS_ALLOW_SAMESIDED_AFTER 500
 ```
 
 To enable *crossover* bilateral combinations (which start on one side of the keyboard and cross over to the other side, such as `RSFT_T(KC_J)` and `LGUI_T(KC_A)` in the word "jam"), add the following line to your `config.h` and define a value: hold times greater than that value will permit crossover bilateral combinations.  For example, if you typed `RSFT_T(KC_J)` and `LGUI_T(KC_A)` faster than the defined value, the keys `KC_J` and `KC_A` would be sent to the computer.  In contrast, if you typed slower than the defined value, the keys `RSFT(KC_A)` would be sent to the computer.
 
 ```c
-#define BILATERAL_COMBINATIONS_CROSSOVER 75
+#define BILATERAL_COMBINATIONS_ALLOW_CROSSOVER_AFTER 75
 ```
 
-To delay the registration of certain modifiers (such as `KC_LGUI` and `KC_RGUI`, which are considered to be "flashing mods" because they suddenly "flash" or pop up the "Start Menu" in Microsoft Windows) during bilateral combinations, you can define a `BILATERAL_COMBINATIONS_DEFERMASK` setting specifying which modifiers should be delayed, and a `BILATERAL_COMBINATIONS_DEFERMODS` setting specifying how long that delay (measured in milliseconds) should be.
+To delay the registration of certain modifiers (such as `KC_LGUI` and `KC_RGUI`, which are considered to be "flashing mods" because they suddenly "flash" or pop up the "Start Menu" in Microsoft Windows) during bilateral combinations, you can define a `BILATERAL_COMBINATIONS_DELAY_MODS_THAT_MATCH` setting specifying which modifiers should be delayed, and a `BILATERAL_COMBINATIONS_DELAY_MATCHED_MODS_BY` setting specifying how long that delay (measured in milliseconds) should be.
 
 1. Add the following line to your `config.h` and define a bitwise mask that matches the modifiers you want to delay.  For example, here we are defining the mask to only match the GUI and ALT modifiers.
 
 ```c
-#define BILATERAL_COMBINATIONS_DEFERMASK (MOD_MASK_GUI|MOD_MASK_ALT) /* GUI and ALT modifiers */
+#define BILATERAL_COMBINATIONS_DELAY_MODS_THAT_MATCH (MOD_MASK_GUI|MOD_MASK_ALT) /* GUI and ALT modifiers */
 ```
 
-2. Add the following line to your `config.h` and define a timeout value (measured in milliseconds) that specifies how long modifiers matched by `BILATERAL_COMBINATIONS_DEFERMASK` should be delayed.  For example, here we are defining the timeout to be 100 milliseconds long.
+2. Add the following line to your `config.h` and define a timeout value (measured in milliseconds) that specifies how long modifiers matched by `BILATERAL_COMBINATIONS_DELAY_MODS_THAT_MATCH` should be delayed.  For example, here we are defining the timeout to be 100 milliseconds long.
 
 ```c
-#define BILATERAL_COMBINATIONS_DEFERMODS 100
+#define BILATERAL_COMBINATIONS_DELAY_MATCHED_MODS_BY 100
 ```
 
 To monitor activations in the background, enable debugging, enable the console, enable terminal bell, add `#define DEBUG_ACTION` to `config.h`, and use something like the following shell command line:

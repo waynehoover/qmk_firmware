@@ -354,17 +354,17 @@ void register_button(bool pressed, enum mouse_buttons button) {
 
 #ifdef BILATERAL_COMBINATIONS
 #    define BILATERAL_COMBINATIONS_CHORD_SIZE_MAX 8 /* modifier state is stored as a single byte in the format (GASC)R(GASC)L */
-#    ifndef BILATERAL_COMBINATIONS_SAMESIDED
-#        define BILATERAL_COMBINATIONS_SAMESIDED (~0) /* infinity */
+#    ifndef BILATERAL_COMBINATIONS_DELAY_MODS_THAT_MATCH
+#        define BILATERAL_COMBINATIONS_DELAY_MODS_THAT_MATCH (~0) /* all mods */
 #    endif
-#    ifndef BILATERAL_COMBINATIONS_CROSSOVER
-#        define BILATERAL_COMBINATIONS_CROSSOVER (~0) /* infinity */
+#    ifndef BILATERAL_COMBINATIONS_DELAY_MATCHED_MODS_BY
+#        define BILATERAL_COMBINATIONS_DELAY_MATCHED_MODS_BY (~0) /* infinity */
 #    endif
-#    ifndef BILATERAL_COMBINATIONS_DEFERMODS
-#        define BILATERAL_COMBINATIONS_DEFERMODS (~0) /* infinity */
+#    ifndef BILATERAL_COMBINATIONS_ALLOW_CROSSOVER_AFTER
+#        define BILATERAL_COMBINATIONS_ALLOW_CROSSOVER_AFTER (~0) /* infinity */
 #    endif
-#    ifndef BILATERAL_COMBINATIONS_DEFERMASK
-#        define BILATERAL_COMBINATIONS_DEFERMASK (~0) /* all mods */
+#    ifndef BILATERAL_COMBINATIONS_ALLOW_SAMESIDED_AFTER
+#        define BILATERAL_COMBINATIONS_ALLOW_SAMESIDED_AFTER (~0) /* infinity */
 #    endif
 static struct {
     bool active;
@@ -459,7 +459,7 @@ static void bilateral_combinations_defermods_cancel(void) {
 }
 
 static void bilateral_combinations_defermods_schedule(uint8_t mods) {
-    if (!(mods & BILATERAL_COMBINATIONS_DEFERMASK)) {
+    if (!(mods & BILATERAL_COMBINATIONS_DELAY_MODS_THAT_MATCH)) {
         register_mods(mods);
         return;
     }
@@ -468,7 +468,7 @@ static void bilateral_combinations_defermods_schedule(uint8_t mods) {
         return; /* piggyback on already scheduled callback */
     }
 
-    bilateral_combinations.defermods = defer_exec(BILATERAL_COMBINATIONS_DEFERMODS, bilateral_combinations_defermods_callback, NULL);
+    bilateral_combinations.defermods = defer_exec(BILATERAL_COMBINATIONS_DELAY_MATCHED_MODS_BY, bilateral_combinations_defermods_callback, NULL);
 }
 
 static void bilateral_combinations_hold(action_t action, keyevent_t event, uint8_t mods) {
@@ -519,17 +519,17 @@ static void bilateral_combinations_tap(keyevent_t event) {
         uint16_t threshold = 0;
 
         if (bilateral_combinations_left(event.key) == bilateral_combinations.left) {
-            threshold += BILATERAL_COMBINATIONS_SAMESIDED;
+            threshold += BILATERAL_COMBINATIONS_ALLOW_SAMESIDED_AFTER;
         }
         else {
-            threshold += BILATERAL_COMBINATIONS_CROSSOVER;
+            threshold += BILATERAL_COMBINATIONS_ALLOW_CROSSOVER_AFTER;
         }
 
         if (threshold > 0) {
-            if ((bilateral_combinations.chord_mods & BILATERAL_COMBINATIONS_DEFERMASK)
+            if ((bilateral_combinations.chord_mods & BILATERAL_COMBINATIONS_DELAY_MODS_THAT_MATCH)
                 && bilateral_combinations.chord_mods == bilateral_combinations.mods)
             {
-                threshold = MAX(threshold, BILATERAL_COMBINATIONS_DEFERMODS);
+                threshold = MAX(threshold, BILATERAL_COMBINATIONS_DELAY_MATCHED_MODS_BY);
             }
             if (TIMER_DIFF_16(event.time, bilateral_combinations.time) > threshold) {
                 bilateral_combinations_register_mods();
