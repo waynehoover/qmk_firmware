@@ -361,6 +361,18 @@ void register_button(bool pressed, enum mouse_buttons button) {
 #    elif (BILATERAL_COMBINATIONS_CHORDSIZE > 8)
 #        error "BILATERAL_COMBINATIONS_CHORDSIZE must be at most 8" /* modifier state is stored as a single byte in the format (GASC)R(GASC)L */
 #    endif
+#    ifndef BILATERAL_COMBINATIONS_SAMESIDED
+#        define BILATERAL_COMBINATIONS_SAMESIDED (~0) /* infinity */
+#    endif
+#    ifndef BILATERAL_COMBINATIONS_CROSSOVER
+#        define BILATERAL_COMBINATIONS_CROSSOVER (~0) /* infinity */
+#    endif
+#    ifndef BILATERAL_COMBINATIONS_DEFERMODS
+#        define BILATERAL_COMBINATIONS_DEFERMODS (~0) /* infinity */
+#    endif
+#    ifndef BILATERAL_COMBINATIONS_DEFERMASK
+#        define BILATERAL_COMBINATIONS_DEFERMASK (~0) /* all mods */
+#    endif
 static struct {
     bool active;
     keypos_t key;
@@ -371,12 +383,8 @@ static struct {
     uint8_t chord_size;
     bool left;
     bool registered;
-#    if (BILATERAL_COMBINATIONS_SAMESIDED + 0) || (BILATERAL_COMBINATIONS_CROSSOVER + 0)
     uint16_t time;
-#    endif
-#    if (BILATERAL_COMBINATIONS_DEFERMODS + 0)
     deferred_token defermods;
-#    endif
 } bilateral_combinations = { false };
 
 static bool bilateral_combinations_left(keypos_t key) {
@@ -391,7 +399,6 @@ static bool bilateral_combinations_left(keypos_t key) {
 #    endif
 }
 
-#    if (BILATERAL_COMBINATIONS_SAMESIDED + 0) || (BILATERAL_COMBINATIONS_CROSSOVER + 0)
 static void bilateral_combinations_register_mods(void) {
     dprint("BILATERAL_COMBINATIONS: register_mods\n");
     if (!bilateral_combinations.registered) {
@@ -399,7 +406,6 @@ static void bilateral_combinations_register_mods(void) {
         register_mods(bilateral_combinations.chord_mods);
     }
 }
-#    endif
 
 static void bilateral_combinations_tap_chord(void) {
     dprint("BILATERAL_COMBINATIONS: register_tap\n");
@@ -416,7 +422,6 @@ static void bilateral_combinations_tap_chord(void) {
     }
 }
 
-#    if (BILATERAL_COMBINATIONS_DEFERMODS + 0)
 static uint32_t bilateral_combinations_defermods_callback(uint32_t trigger_time, void *cb_arg) {
     dprint("BILATERAL_COMBINATIONS: defermods\n");
     if (!bilateral_combinations.registered) {
@@ -446,7 +451,6 @@ static void bilateral_combinations_defermods_schedule(void) {
 
     bilateral_combinations.defermods = defer_exec(delay_ms, bilateral_combinations_defermods_callback, NULL);
 }
-#    endif
 
 static void bilateral_combinations_hold(action_t action, keyevent_t event, uint8_t mods) {
     dprint("BILATERAL_COMBINATIONS: hold\n");
@@ -460,13 +464,9 @@ static void bilateral_combinations_hold(action_t action, keyevent_t event, uint8
         bilateral_combinations.chord_size = 1;
         bilateral_combinations.left = bilateral_combinations_left(event.key);
         bilateral_combinations.registered = false;
-#    if (BILATERAL_COMBINATIONS_SAMESIDED + 0) || (BILATERAL_COMBINATIONS_CROSSOVER + 0)
         bilateral_combinations.time = event.time;
-#    endif
-#    if (BILATERAL_COMBINATIONS_DEFERMODS + 0) && (BILATERAL_COMBINATIONS_DEFERMASK + 0)
         bilateral_combinations_defermods_schedule();
         return; /* skip add_mods() */
-#    endif
     }
     else {
         /* new key being held is on the same side: register it now for mouse usage */
@@ -476,12 +476,7 @@ static void bilateral_combinations_hold(action_t action, keyevent_t event, uint8
                 bilateral_combinations.chord_mods |= mods;
                 bilateral_combinations.chord_size++;
             }
-#    if (BILATERAL_COMBINATIONS_DEFERMODS + 0)
             bilateral_combinations_defermods_schedule();
-#    else
-            register_mods(mods);
-            return; /* skip add_mods() */
-#    endif
         }
         /* new key being held is on the other side of the keyboard: make it a tap */
         else {
@@ -499,9 +494,7 @@ static void bilateral_combinations_release(action_t action, keyevent_t event, ui
         /* original key: clear out bilateral combinations */
         if (KEYEQ(event.key, bilateral_combinations.key)) {
             bilateral_combinations.active = false;
-#    if (BILATERAL_COMBINATIONS_DEFERMODS + 0)
             bilateral_combinations_defermods_cancel();
-#    endif
         }
         /* different key but same modifier: ignore release */
         else if (mods == bilateral_combinations.mods) {
@@ -517,33 +510,30 @@ static void bilateral_combinations_tap(keyevent_t event) {
     dprint("BILATERAL_COMBINATIONS: tap\n");
     if (bilateral_combinations.active) {
         uint16_t threshold = 0;
+
         if (bilateral_combinations_left(event.key) == bilateral_combinations.left) {
-#    if (BILATERAL_COMBINATIONS_SAMESIDED + 0)
             threshold += BILATERAL_COMBINATIONS_SAMESIDED;
-#    endif
         }
-#    if (BILATERAL_COMBINATIONS_CROSSOVER + 0)
         else {
             threshold += BILATERAL_COMBINATIONS_CROSSOVER;
         }
-#    endif
+
         if (threshold > 0) {
-#    if (BILATERAL_COMBINATIONS_DEFERMODS + 0) && (BILATERAL_COMBINATIONS_DEFERMASK + 0)
             if ((bilateral_combinations.chord_mods & BILATERAL_COMBINATIONS_DEFERMASK)
                 && bilateral_combinations.chord_mods == bilateral_combinations.mods)
             {
                 threshold = MAX(threshold, BILATERAL_COMBINATIONS_DEFERMODS);
             }
-#    endif
             if (TIMER_DIFF_16(event.time, bilateral_combinations.time) > threshold) {
                 bilateral_combinations_register_mods();
                 return; /* skip tap_chord() */
             }
         }
+
         bilateral_combinations_tap_chord();
     }
 }
-#endif
+#endif /* BILATERAL_COMBINATIONS */
 
 /** \brief Take an action and processes it.
  *
