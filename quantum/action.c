@@ -445,7 +445,7 @@ static void bilateral_combinations_tap_chord(void) {
 
 static uint32_t bilateral_combinations_defermods_callback(uint32_t trigger_time, void *cb_arg) {
     dprint("BILATERAL_COMBINATIONS: defermods\n");
-    register_mods(bilateral_combinations.chord_mods);
+    bilateral_combinations_register_mods();
     bilateral_combinations.defermods = INVALID_DEFERRED_TOKEN;
     return 0;
 }
