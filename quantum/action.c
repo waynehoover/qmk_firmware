@@ -353,7 +353,9 @@ void register_button(bool pressed, enum mouse_buttons button) {
 #endif
 
 #ifdef BILATERAL_COMBINATIONS
-#    define BILATERAL_COMBINATIONS_CHORD_SIZE_MAX 8 /* modifier state is stored as a single byte in the format (GASC)R(GASC)L */
+#    ifndef BILATERAL_COMBINATIONS_LIMIT_CHORD_TO_N_KEYS
+#        define BILATERAL_COMBINATIONS_LIMIT_CHORD_TO_N_KEYS 8 /* modifier state is stored as a single byte in the format (GASC)R(GASC)L */
+#    endif
 #    ifndef BILATERAL_COMBINATIONS_DELAY_MODS_THAT_MATCH
 #        define BILATERAL_COMBINATIONS_DELAY_MODS_THAT_MATCH (~0) /* all mods */
 #    endif
@@ -371,8 +373,8 @@ static struct {
     keypos_t key;
     uint8_t code;
     uint8_t mods;
-    keypos_t chord_keys[BILATERAL_COMBINATIONS_CHORD_SIZE_MAX];
-    uint8_t chord_taps[BILATERAL_COMBINATIONS_CHORD_SIZE_MAX];
+    keypos_t chord_keys[BILATERAL_COMBINATIONS_LIMIT_CHORD_TO_N_KEYS];
+    uint8_t chord_taps[BILATERAL_COMBINATIONS_LIMIT_CHORD_TO_N_KEYS];
     uint8_t chord_mods;
     uint8_t chord_size;
     bool left;
@@ -394,7 +396,7 @@ static bool bilateral_combinations_left(keypos_t key) {
 }
 
 static void bilateral_combinations_chord_add(keypos_t key, uint8_t mods, uint8_t code) {
-    if (bilateral_combinations.chord_size < BILATERAL_COMBINATIONS_CHORD_SIZE_MAX) {
+    if (bilateral_combinations.chord_size < BILATERAL_COMBINATIONS_LIMIT_CHORD_TO_N_KEYS) {
         bilateral_combinations.chord_keys[bilateral_combinations.chord_size] = key;
         bilateral_combinations.chord_taps[bilateral_combinations.chord_size] = code;
         bilateral_combinations.chord_size++;
