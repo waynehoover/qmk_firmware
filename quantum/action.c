@@ -371,7 +371,8 @@ static struct {
     keypos_t key;
     uint8_t code;
     uint8_t mods;
-    uint16_t chord_taps[BILATERAL_COMBINATIONS_CHORD_SIZE_MAX];
+    keypos_t chord_keys[BILATERAL_COMBINATIONS_CHORD_SIZE_MAX];
+    uint8_t chord_taps[BILATERAL_COMBINATIONS_CHORD_SIZE_MAX];
     uint8_t chord_mods;
     uint8_t chord_size;
     bool left;
@@ -392,26 +393,24 @@ static bool bilateral_combinations_left(keypos_t key) {
 #    endif
 }
 
-#define BILATERAL_COMBINATIONS_CHORD(mods, code) ((mods << 8) | code)
-#define BILATERAL_COMBINATIONS_CHORD_MODS QK_MODS_GET_MODS
-#define BILATERAL_COMBINATIONS_CHORD_CODE QK_MODS_GET_BASIC_KEYCODE
-
-static void bilateral_combinations_chord_add(uint8_t mods, uint8_t code) {
+static void bilateral_combinations_chord_add(keypos_t key, uint8_t mods, uint8_t code) {
     if (bilateral_combinations.chord_size < BILATERAL_COMBINATIONS_CHORD_SIZE_MAX) {
-        bilateral_combinations.chord_taps[bilateral_combinations.chord_size++] = BILATERAL_COMBINATIONS_CHORD(mods, code);
+        bilateral_combinations.chord_keys[bilateral_combinations.chord_size] = key;
+        bilateral_combinations.chord_taps[bilateral_combinations.chord_size] = code;
+        bilateral_combinations.chord_size++;
     }
     bilateral_combinations.chord_mods |= mods;
 }
 
-static void bilateral_combinations_chord_del(uint8_t mods, uint8_t code) {
+static void bilateral_combinations_chord_del(keypos_t key, uint8_t mods, uint8_t code) {
     bool found = false;
     for (uint8_t k = 0; k < bilateral_combinations.chord_size; k++) {
-        uint16_t tap = bilateral_combinations.chord_taps[k];
         if (found) {
-            /* shift later taps in the buffer to the left */
-            bilateral_combinations.chord_taps[k - 1] = tap;
+            /* shift the later keys in the chord over to the left */
+            bilateral_combinations.chord_keys[k-1] = bilateral_combinations.chord_keys[k];
+            bilateral_combinations.chord_taps[k-1] = bilateral_combinations.chord_taps[k];
         }
-        else if (tap == BILATERAL_COMBINATIONS_CHORD(mods, code)) {
+        else if (KEYEQ(key, bilateral_combinations.chord_keys[k])) {
             found = true;
         }
     }
@@ -439,7 +438,7 @@ static void bilateral_combinations_tap_chord(void) {
 
         /* replay chord as individual taps */
         for (uint8_t k = 0; k < bilateral_combinations.chord_size; k++) {
-            tap_code(BILATERAL_COMBINATIONS_CHORD_CODE(bilateral_combinations.chord_taps[k]));
+            tap_code(bilateral_combinations.chord_taps[k]);
         }
     }
 }
@@ -491,7 +490,7 @@ static void bilateral_combinations_hold(action_t action, keyevent_t event, uint8
         bilateral_combinations_defermods_cancel();
         return; /* skip defermods_schedule() */
     }
-    bilateral_combinations_chord_add(mods, action.layer_tap.code);
+    bilateral_combinations_chord_add(event.key, mods, action.layer_tap.code);
     bilateral_combinations_defermods_schedule(mods);
 }
 
@@ -508,7 +507,7 @@ static void bilateral_combinations_release(action_t action, keyevent_t event, ui
             return; /* skip unregister_mods() */
         }
 
-        bilateral_combinations_chord_del(mods, action.layer_tap.code);
+        bilateral_combinations_chord_del(event.key, mods, action.layer_tap.code);
     }
     unregister_mods(mods);
 }
