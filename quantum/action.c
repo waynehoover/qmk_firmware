@@ -376,7 +376,7 @@ static struct {
     uint8_t chord_mods;
     uint8_t chord_size;
     bool left;
-    bool registered;
+    bool flushed;
     uint16_t time;
     deferred_token defermods;
 } bilateral_combinations = { false };
@@ -420,18 +420,23 @@ static void bilateral_combinations_chord_del(keypos_t key, uint8_t mods, uint8_t
     bilateral_combinations.chord_mods &= ~mods;
 }
 
-static void bilateral_combinations_register_mods(void) {
-    dprint("BILATERAL_COMBINATIONS: register_mods\n");
-    if (!bilateral_combinations.registered) {
-        bilateral_combinations.registered = true;
+static void bilateral_combinations_apply_chord_mods(void) {
+    dprint("BILATERAL_COMBINATIONS: apply_chord_mods\n");
+    if (!bilateral_combinations.flushed) {
         register_mods(bilateral_combinations.chord_mods);
     }
 }
 
-static void bilateral_combinations_register_chord(void) {
-    dprint("BILATERAL_COMBINATIONS: register_chord\n");
-    if (!bilateral_combinations.registered) {
-        bilateral_combinations.registered = true;
+static void bilateral_combinations_flush_chord_mods(void) {
+    dprint("BILATERAL_COMBINATIONS: flush_chord_mods\n");
+    bilateral_combinations_apply_chord_mods();
+    bilateral_combinations.flushed = true;
+}
+
+static void bilateral_combinations_flush_chord_taps(void) {
+    dprint("BILATERAL_COMBINATIONS: flush_chord_taps\n");
+    if (!bilateral_combinations.flushed) {
+        bilateral_combinations.flushed = true;
 
         /* cancel mods added by chord keys */
         clear_mods();
@@ -445,8 +450,10 @@ static void bilateral_combinations_register_chord(void) {
 
 static uint32_t bilateral_combinations_defermods_callback(uint32_t trigger_time, void *cb_arg) {
     dprint("BILATERAL_COMBINATIONS: defermods\n");
-    bilateral_combinations_register_mods();
-    bilateral_combinations.defermods = INVALID_DEFERRED_TOKEN;
+    if (bilateral_combinations.active) {
+        bilateral_combinations_apply_chord_mods();
+        bilateral_combinations.defermods = INVALID_DEFERRED_TOKEN;
+    }
     return 0;
 }
 
@@ -480,14 +487,14 @@ static void bilateral_combinations_hold(action_t action, keyevent_t event, uint8
         bilateral_combinations.chord_mods = 0; /* for chord_add() */
         bilateral_combinations.chord_size = 0; /* for chord_add() */
         bilateral_combinations.left = bilateral_combinations_left(event.key);
-        bilateral_combinations.registered = false;
+        bilateral_combinations.flushed = false;
         bilateral_combinations.time = event.time;
     }
     /* new key being held is on the other side of the keyboard: make it a tap! */
     else if (bilateral_combinations_left(event.key) != bilateral_combinations.left) {
-        bilateral_combinations_register_chord();
+        bilateral_combinations_flush_chord_taps();
         tap_code(action.layer_tap.code);
-        return; /* skip defermods_schedule() */
+        return; /* skip defermods */
     }
     bilateral_combinations_chord_add(event.key, mods, action.layer_tap.code);
     bilateral_combinations_defermods_schedule(mods);
@@ -530,12 +537,12 @@ static void bilateral_combinations_tap(keyevent_t event) {
                 threshold = MAX(threshold, BILATERAL_COMBINATIONS_DELAY_MATCHED_MODS_BY);
             }
             if (TIMER_DIFF_16(event.time, bilateral_combinations.time) > threshold) {
-                bilateral_combinations_register_mods();
-                return; /* skip tap_chord() */
+                bilateral_combinations_flush_chord_mods();
+                return; /* skip flush_chord_taps() */
             }
         }
 
-        bilateral_combinations_register_chord();
+        bilateral_combinations_flush_chord_taps();
     }
 }
 #endif /* BILATERAL_COMBINATIONS */
