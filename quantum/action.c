@@ -428,8 +428,8 @@ static void bilateral_combinations_register_mods(void) {
     }
 }
 
-static void bilateral_combinations_tap_chord(void) {
-    dprint("BILATERAL_COMBINATIONS: register_tap\n");
+static void bilateral_combinations_register_chord(void) {
+    dprint("BILATERAL_COMBINATIONS: register_chord\n");
     if (!bilateral_combinations.registered) {
         bilateral_combinations.registered = true;
 
@@ -464,7 +464,7 @@ static void bilateral_combinations_defermods_schedule(uint8_t mods) {
     }
 
     if (bilateral_combinations.defermods != INVALID_DEFERRED_TOKEN) {
-        return; /* piggyback on already scheduled callback */
+        return; /* piggyback onto already scheduled callback */
     }
 
     bilateral_combinations.defermods = defer_exec(BILATERAL_COMBINATIONS_DELAY_MATCHED_MODS_BY, bilateral_combinations_defermods_callback, NULL);
@@ -485,9 +485,8 @@ static void bilateral_combinations_hold(action_t action, keyevent_t event, uint8
     }
     /* new key being held is on the other side of the keyboard: make it a tap! */
     else if (bilateral_combinations_left(event.key) != bilateral_combinations.left) {
-        bilateral_combinations_tap_chord();
+        bilateral_combinations_register_chord();
         tap_code(action.layer_tap.code);
-        bilateral_combinations_defermods_cancel();
         return; /* skip defermods_schedule() */
     }
     bilateral_combinations_chord_add(event.key, mods, action.layer_tap.code);
@@ -536,7 +535,7 @@ static void bilateral_combinations_tap(keyevent_t event) {
             }
         }
 
-        bilateral_combinations_tap_chord();
+        bilateral_combinations_register_chord();
     }
 }
 #endif /* BILATERAL_COMBINATIONS */
