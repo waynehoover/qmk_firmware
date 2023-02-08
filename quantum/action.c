@@ -490,7 +490,6 @@ static void bilateral_combinations_hold(action_t action, keyevent_t event, uint8
         bilateral_combinations.chord_size = 0; /* for chord_add() */
         bilateral_combinations.left = bilateral_combinations_left(event.key);
         bilateral_combinations.flushed = false;
-        bilateral_combinations.time = event.time;
     }
     /* new key being held is on the other side of the keyboard: make it a tap! */
     else if (bilateral_combinations_left(event.key) != bilateral_combinations.left) {
@@ -498,6 +497,7 @@ static void bilateral_combinations_hold(action_t action, keyevent_t event, uint8
         tap_code(action.layer_tap.code);
         return; /* skip defermods */
     }
+    bilateral_combinations.time = event.time;
     bilateral_combinations_chord_add(event.key, mods, action.layer_tap.code);
     bilateral_combinations_defermods_schedule(mods);
 }
