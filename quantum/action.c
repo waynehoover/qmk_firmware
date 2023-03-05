@@ -368,6 +368,9 @@ void register_button(bool pressed, enum mouse_buttons button) {
 #    ifndef BILATERAL_COMBINATIONS_ALLOW_SAMESIDED_AFTER
 #        define BILATERAL_COMBINATIONS_ALLOW_SAMESIDED_AFTER (~0) /* infinity */
 #    endif
+#    ifndef BILATERAL_COMBINATIONS_TYPING_STREAK_TIMEOUT
+#        define BILATERAL_COMBINATIONS_TYPING_STREAK_TIMEOUT 0    /* disabled */
+#    endif
 static struct {
     bool active;
     keypos_t key;
@@ -482,6 +485,12 @@ static void bilateral_combinations_defermods_schedule(uint8_t mods) {
 static void bilateral_combinations_hold(action_t action, keyevent_t event, uint8_t mods) {
     dprint("BILATERAL_COMBINATIONS: hold\n");
     if (!bilateral_combinations.active) {
+#    if BILATERAL_COMBINATIONS_TYPING_STREAK_TIMEOUT
+        if (TIMER_DIFF_16(event.time, bilateral_combinations.time) < BILATERAL_COMBINATIONS_TYPING_STREAK_TIMEOUT) {
+            tap_code(action.layer_tap.code);
+            return; /* don't activate: we're in the middle of a typing streak! */
+        }
+#    endif
         bilateral_combinations.active = true;
         bilateral_combinations.key = event.key;
         bilateral_combinations.code = action.key.code;
@@ -546,6 +555,11 @@ static void bilateral_combinations_tap(keyevent_t event) {
 
         bilateral_combinations_flush_chord_taps();
     }
+#   if BILATERAL_COMBINATIONS_TYPING_STREAK_TIMEOUT
+    else {
+        bilateral_combinations.time = event.time;
+    }
+#   endif
 }
 #endif /* BILATERAL_COMBINATIONS */
 

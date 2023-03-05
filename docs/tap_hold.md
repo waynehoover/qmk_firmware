@@ -516,6 +516,12 @@ To delay the registration of certain modifiers (such as `KC_LGUI` and `KC_RGUI`,
 #define BILATERAL_COMBINATIONS_DELAY_MATCHED_MODS_BY 100
 ```
 
+To suppress mod-tap holds within a *typing streak*, add the following line to your `config.h` and define a timeout value: a typing streak ends when this much time passes after the last key in the streak is tapped.  Until such time has passed, mod-tap holds are converted into regular taps.  The default value of this definition is `0`, which disables this feature entirely.  Overall, this feature is similar in spirit to ZMK's global-quick-tap feature.
+
+```c
+#define BILATERAL_COMBINATIONS_TYPING_STREAK_TIMEOUT 175
+```
+
 To monitor activations in the background, enable debugging, enable the console, enable terminal bell, add `#define DEBUG_ACTION` to `config.h`, and use something like the following shell command line:
 
 ```sh
