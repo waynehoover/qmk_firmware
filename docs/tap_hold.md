@@ -522,6 +522,12 @@ To suppress mod-tap holds within a *typing streak*, add the following line to yo
 #define BILATERAL_COMBINATIONS_TYPING_STREAK_TIMEOUT 175
 ```
 
+If you wish to target only certain modifiers (instead of all possible modifiers) for the *typing streak timeout* setting described above, add the following line to your `config.h` and define a bit mask: only those modifiers that match this mask will be governed by the typing streak timeout.  For example, to exempt Shift modifiers from the typing streak timeout while still targeting all other modifiers, you can specify the following mask.
+
+```c
+#define BILATERAL_COMBINATIONS_TYPING_STREAK_MODMASK (~MOD_MASK_SHIFT)
+```
+
 To monitor activations in the background, enable debugging, enable the console, enable terminal bell, add `#define DEBUG_ACTION` to `config.h`, and use something like the following shell command line:
 
 ```sh

@@ -371,6 +371,9 @@ void register_button(bool pressed, enum mouse_buttons button) {
 #    ifndef BILATERAL_COMBINATIONS_TYPING_STREAK_TIMEOUT
 #        define BILATERAL_COMBINATIONS_TYPING_STREAK_TIMEOUT 0    /* disabled */
 #    endif
+#    ifndef BILATERAL_COMBINATIONS_TYPING_STREAK_MODMASK
+#        define BILATERAL_COMBINATIONS_TYPING_STREAK_MODMASK (~0) /* all mods */
+#    endif
 static struct {
     bool active;
     keypos_t key;
@@ -486,7 +489,9 @@ static void bilateral_combinations_hold(action_t action, keyevent_t event, uint8
     dprint("BILATERAL_COMBINATIONS: hold\n");
     if (!bilateral_combinations.active) {
 #    if BILATERAL_COMBINATIONS_TYPING_STREAK_TIMEOUT
-        if (TIMER_DIFF_16(event.time, bilateral_combinations.time) < BILATERAL_COMBINATIONS_TYPING_STREAK_TIMEOUT) {
+        if (TIMER_DIFF_16(event.time, bilateral_combinations.time) < BILATERAL_COMBINATIONS_TYPING_STREAK_TIMEOUT
+            && (mods & BILATERAL_COMBINATIONS_TYPING_STREAK_MODMASK))
+        {
             tap_code(action.layer_tap.code);
             return; /* don't activate: we're in the middle of a typing streak! */
         }
