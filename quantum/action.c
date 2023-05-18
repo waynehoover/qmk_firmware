@@ -350,7 +350,7 @@ void register_mouse(uint8_t mouse_keycode, bool pressed) {
 #        define BILATERAL_COMBINATIONS_LIMIT_CHORD_TO_N_KEYS 8 /* modifier state is stored as a single byte in the format (GASC)R(GASC)L */
 #    endif
 #    ifndef BILATERAL_COMBINATIONS_DELAY_MODS_THAT_MATCH
-#        define BILATERAL_COMBINATIONS_DELAY_MODS_THAT_MATCH (~0) /* all mods */
+#        define BILATERAL_COMBINATIONS_DELAY_MODS_THAT_MATCH 0    /* disabled */
 #    endif
 #    ifndef BILATERAL_COMBINATIONS_DELAY_MATCHED_MODS_BY
 #        define BILATERAL_COMBINATIONS_DELAY_MATCHED_MODS_BY (~0) /* infinity */
