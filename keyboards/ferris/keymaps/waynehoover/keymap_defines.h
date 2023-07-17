@@ -4,7 +4,7 @@
 #include "../../../users/callum/oneshot.h"
 #include "../../../users/callum/swapper.h"
 
-#define HS_HYP   KC_F19             // Not currently defined in hammerspoon
+#define HS_HYP   KC_F19         // Not currently defined in hammerspoon
 #define WD_LFT   A(KC_LEFT)     // Word left
 #define WD_RHT   A(KC_RIGHT)    // Word right
 #define DEL_WD   A(KC_BSPC)     // Delete Word

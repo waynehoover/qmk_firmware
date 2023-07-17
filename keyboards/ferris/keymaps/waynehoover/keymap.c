@@ -224,6 +224,9 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case HYP_SPC:
             return TAPPING_TERM + 25;
+        case SFT_H:
+        case SFT_I:
+            return TAPPING_TERM + 10;
         case RAI_ENT:
             return TAPPING_TERM - 5;
         default:
