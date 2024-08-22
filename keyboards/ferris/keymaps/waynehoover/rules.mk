@@ -1,1 +1,1 @@
-BOOTLOADER = caterina
+BOOTLOADER = atmel-dfu

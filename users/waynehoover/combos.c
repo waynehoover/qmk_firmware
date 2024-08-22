@@ -17,7 +17,7 @@
 
 // ** combos right hand **
 // gr -> [blank]
-// gc -> - (redundant, change to ` possibly)
+// gc -> - (change to ` but need to make - redudant somewhere)
 // cr -> [blank]
 
 // hn -> paste
