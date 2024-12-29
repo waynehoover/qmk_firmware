@@ -6,7 +6,7 @@
 #include "callum/oneshot.h"
 #include "callum/swapper.h"
 #include "features/achordion.h" // https://getreuer.info/posts/keyboards/achordion/index.html#add-achordion-to-your-keymap
-#include "features/sentence_case.h" // https://getreuer.info/posts/keyboards/sentence-case/index.html#add-it-to-your-keymap
+// #include "features/sentence_case.h" // https://getreuer.info/posts/keyboards/sentence-case/index.html#add-it-to-your-keymap
 
 #define MASTER_RIGHT
 
@@ -28,6 +28,7 @@
 #define TOG_COMM G(DV_SLSH)     // Toggle comment
 #define ALT_SPC  LALT_T(KC_SPC)
 #define ALT_BSP  LALT_T(KC_BSPC)
+#define ALT_O    LALT_T(DV_O)
 #define GUI_ESC  LGUI_T(KC_ESC)
 #define GUI_SPC  LGUI_T(KC_SPC)
 #define GUI_ENT  LGUI_T(KC_ENT)
@@ -87,7 +88,7 @@ enum keycodes {
 
   SW_WIN,   // Switch to next window  (cmd-`)
   SW_APP,   // Switch to next app     (cmd-tab)
-  SW_TAB,   // Switch to next tab     (ctl-tab)
+  SW_TAB,   // Switch to next tab     (ctl-tab)o
 
   UDELLIN,
   TOGGLE_LOWER,
