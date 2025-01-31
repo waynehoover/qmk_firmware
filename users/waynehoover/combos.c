@@ -1,10 +1,10 @@
 // ** combos left hand **
-// ', -> f16 (hs opt click)
+// ', -> ___
 // ,p -> select all
 // ,. -> esc
 // .p -> tab
 
-// ao -> f15 (hs cmd click)
+// ao -> ___
 // io -> copy
 // oe -> )
 // ei -> (
@@ -13,15 +13,15 @@
 // qk -> cut
 // qj -> ~
 // jk -> `
-// kx -> play/pause
+// kx -> ___
 
 // ** combos right hand **
-// gr -> [blank]
+// gr -> ___
 // gc -> - (change to ` but need to make - redudant somewhere)
-// cr -> [blank]
+// cr -> ___
 
 // hn -> paste
-// tn -> [blank]
+// tn -> ___
 // th -> th
 
 // lw -> tab left
@@ -64,14 +64,14 @@ combo_t key_combos[] = {
     [CM_5] = COMBO(combo_5, G(A((KC_LEFT)))),
     [CM_6] = COMBO(combo_6, G(A(KC_RIGHT))),
     [CM_7]  = COMBO(combo_7, G(DV_C)),
-    [CM_8]  = COMBO(f_16, KC_F16),
-    [CM_8a] = COMBO(f_15, KC_F15),
+    //[CM_8]  = COMBO(f_16, KC_F16),
+    //[CM_8a] = COMBO(f_15, KC_F15),
     [CM_9]  = COMBO(combo_9, G(DV_A)),
-    [CM_10] = COMBO(hs_hypr, HS_HYP),
+    // [CM_10] = COMBO(hs_hypr, HS_HYP),
     [CM_11] = COMBO(combo_11, G(DV_X)),
     [CM_12] = COMBO(combo_12, G(DV_Q)),
     [CM_13] = COMBO(combo_13, G(DV_W)),
-    [CM_14] = COMBO(c_play, KC_MPLY),
+    // [CM_14] = COMBO(c_play, KC_MPLY),
     [CM_15] = COMBO(combo_15, DV_LPRN),
     [CM_16] = COMBO(combo_16, DV_RPRN),
     [CM_17] = COMBO(c_paste, G(DV_V)),
