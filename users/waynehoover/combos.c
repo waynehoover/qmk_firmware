@@ -21,14 +21,15 @@
 // cr -> ___
 
 // hn -> paste
-// tn -> ___
-// th -> th
+// tn -> f19
+// ht -> th
+// ns -> ____
 
 // lw -> tab left
 // wv -> tab right
 // vz -> close window*
 
-enum combos { CM_0, CM_1, CM_2, CM_3, CM_4, CM_5, CM_6, CM_7, CM_8, CM_8a, CM_9, CM_11, CM_10, CM_12, CM_13, CM_14, CM_15, CM_16, CM_17, CM_18, CM_19, CM_20 };
+enum combos { CM_0, CM_1, CM_2, CM_3, CM_4, CM_5, CM_6, CM_7, CM_8, CM_9, CM_11, CM_10, CM_12, CM_13, CM_14, CM_15, CM_16, CM_17, CM_18, CM_19, CM_20 };
 
 const uint16_t PROGMEM c_esc[]    = {DV_COMM, DV_DOT, COMBO_END};   // esc
 const uint16_t PROGMEM c_tab[]    = {DV_DOT, DV_P, COMBO_END};      // tab
@@ -43,6 +44,8 @@ const uint16_t PROGMEM f_15[]     = {DV_A, DV_O, COMBO_END};        // f15
 const uint16_t PROGMEM c_play[]   = {DV_K, DV_X, COMBO_END};        // play/pause
 const uint16_t PROGMEM combo_9[]  = {DV_COMM, DV_P, COMBO_END};     // select all
 const uint16_t PROGMEM f_19[]     = {SFT_H, DV_T, DV_N, COMBO_END}; // f19
+const uint16_t PROGMEM f_19b[]    = {DV_T, DV_N, COMBO_END};        // f19
+const uint16_t PROGMEM f_19c[]    = {THB_R1, GUI_E, COMBO_END};     // f19
 const uint16_t PROGMEM combo_11[] = {DV_Q, DV_K, COMBO_END};        // cut
 const uint16_t PROGMEM combo_12[] = {DV_COLN, DV_Q, COMBO_END};     // quit
 const uint16_t PROGMEM combo_13[] = {DV_V, SFT_Z, COMBO_END};       // close window
@@ -64,14 +67,13 @@ combo_t key_combos[] = {
     [CM_5] = COMBO(combo_5, G(A((KC_LEFT)))),
     [CM_6] = COMBO(combo_6, G(A(KC_RIGHT))),
     [CM_7]  = COMBO(combo_7, G(DV_C)),
-    //[CM_8]  = COMBO(f_16, KC_F16),
-    //[CM_8a] = COMBO(f_15, KC_F15),
+    [CM_8] = COMBO(f_19c, KC_F19),
     [CM_9]  = COMBO(combo_9, G(DV_A)),
     [CM_10] = COMBO(f_19, KC_F19),
     [CM_11] = COMBO(combo_11, G(DV_X)),
     [CM_12] = COMBO(combo_12, G(DV_Q)),
     [CM_13] = COMBO(combo_13, G(DV_W)),
-    // [CM_14] = COMBO(c_play, KC_MPLY),
+    [CM_14] = COMBO(f_19b, KC_F19),
     [CM_15] = COMBO(combo_15, DV_LPRN),
     [CM_16] = COMBO(combo_16, DV_RPRN),
     [CM_17] = COMBO(c_paste, G(DV_V)),
