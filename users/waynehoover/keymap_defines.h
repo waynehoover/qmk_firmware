@@ -28,6 +28,7 @@
 #define ALT_SPC  LALT_T(KC_SPC)
 #define ALT_BSP  LALT_T(KC_BSPC)
 #define ALT_O    LALT_T(DV_O)
+#define ALT_ENT  LALT_T(KC_ENT)
 #define GUI_ESC  LGUI_T(KC_ESC)
 #define GUI_SPC  LGUI_T(KC_SPC)
 #define GUI_ENT  LGUI_T(KC_ENT)
@@ -68,12 +69,11 @@
 #define HYP_E    HYPR_T(DV_E)
 #define OS_SFT   OSM(MOD_LSFT)
 
-#define THB_L2 MO_LOW  // MO_LOW  is Original
-#define THB_L1 ALT_SPC // ALT_SPC is Original
+#define THB_L2 OS_SFT  // MO_LOW  is Original
+#define THB_L1 LOW_SPC // ALT_SPC is Original
 
-#define THB_R1 KC_BSPC // KC_BSPC is Original
-#define THB_R2 RAI_ENT // RAI_ENT is Original
-
+#define THB_R1 ALT_BSP // next try RAI_BSP // KC_BSPC is Original
+#define THB_R2 RAI_ENT // next try ALT_ENT // RAI_ENT is Original
 
 // If I moved thmb_l2 to os_sft, then I could remove the shift keys on the home row.
 // and if I made thmb_r2 a gui_ent then I could remove gui, but that wouldn't work because most gui keys I press are on the right.

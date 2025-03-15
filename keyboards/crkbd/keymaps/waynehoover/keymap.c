@@ -12,7 +12,7 @@ enum ferris_layers {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [DVORAKIL] = LAYOUT_split_3x6_3(
     _______ , DV_QUOT , DV_COMM , DV_DOT  , DV_P    , DV_Y    ,         DV_F    , DV_G    , DV_C    , DV_R    , DV_M     , _______ ,
-    _______ , DV_A    , DV_O    , GUI_E   , SFT_I   , DV_U    ,         DV_D    , SFT_H   , DV_T    , DV_N    , DV_S     , _______ ,
+    _______ , DV_A    , DV_O    , GUI_E   , DV_I    , DV_U    ,         DV_D    , DV_H    , DV_T    , DV_N    , DV_S     , _______ ,
     _______ , DV_COLN , DV_Q    , DV_J    , DV_K    , DV_X    ,         DV_B    , DV_L    , DV_W    , DV_V    , DV_Z     , _______ ,
                                   _______ , THB_L2  , THB_L1  ,         THB_R1  , THB_R2  , TOG_MIC
   ),
@@ -125,13 +125,13 @@ bool achordion_chord(uint16_t tap_hold_keycode,
 
 bool achordion_eager_mod(uint8_t mod) {
   switch (mod) {
-    case MOD_LSFT:
+    // case MOD_LSFT:
     case MOD_LALT:
     case MOD_LGUI:
-    case MOD_RSFT:
+    // case MOD_RSFT:
     case MOD_RALT:
     case MOD_RGUI:
-      return true;  // Eagerly apply Shift, Alt, and Gui mods.
+      return true;  // Eagerly apply Alt Gui mods.
 
     default:
       return false;
@@ -140,7 +140,7 @@ bool achordion_eager_mod(uint8_t mod) {
 
 uint16_t achordion_streak_chord_timeout(uint16_t tap_hold_keycode, uint16_t next_keycode) {
   if (IS_QK_LAYER_TAP(tap_hold_keycode)) {
-    return 0;  // Disable streak detection on layer-tap keys.k
+    return 0;  // Disable streak detection on layer-tap keys.
   }
 
   // Otherwise, tap_hold_keycode is a mod-tap key.
@@ -216,7 +216,7 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         case ALT_O:
         case GUI_E:
         case SFT_I:
-            return TAPPING_TERM - 5;
+            return TAPPING_TERM; // was - 10
         default:
             return TAPPING_TERM;
     }
