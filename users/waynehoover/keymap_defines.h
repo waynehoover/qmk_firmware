@@ -46,7 +46,7 @@
 #define SFT_H    MT(MOD_LSFT, DV_H) // LSFT_T(DV_H)
 #define SFT_E    LSFT_T(DV_E)
 #define SFT_Te   LSFT_T(DV_T)
-#define SFT_BSP  LSFT_T(KC_BSPC)
+#define SFT_BSPC LSFT_T(KC_BSPC)
 #define SFT_LBRC LSFT_T(DV_LBRC)
 #define SFT_PRN  LSFT_T(KC_F22)
 #define SFT_ENT  LSFT_T(KC_ENT)
@@ -69,14 +69,14 @@
 #define HYP_E    HYPR_T(DV_E)
 #define OS_SFT   OSM(MOD_LSFT)
 
-#define THB_L2 OS_SFT  // MO_LOW  is Original
-#define THB_L1 LOW_SPC // ALT_SPC is Original
+#define IDX_L    DV_I    // ideal DV_I, SFT_I is Orig
+#define IDX_R    DV_H    // ideal DV_H, SFT_H is Original
 
-#define THB_R1 ALT_BSP // next try RAI_BSP // KC_BSPC is Original
-#define THB_R2 RAI_ENT // next try ALT_ENT // RAI_ENT is Original
+#define THB_L2   MO_LOW   // ideal OS_SFT, MO_LOW  is Original
+#define THB_L1   ALT_SPC  // ideal LOW_SPC, ALT_SPC is Original
 
-// If I moved thmb_l2 to os_sft, then I could remove the shift keys on the home row.
-// and if I made thmb_r2 a gui_ent then I could remove gui, but that wouldn't work because most gui keys I press are on the right.
+#define THB_R1   KC_BSPC // ideal RAI_BSP, KC_BSPC is Original
+#define THB_R2   RAI_ENT  // ideal ALT_ENT, RAI_ENT is Original
 
 enum keycodes {
   // Custom oneshot mod implementation with no timers.

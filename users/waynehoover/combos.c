@@ -38,23 +38,23 @@ const uint16_t PROGMEM c_grv[]    = {DV_J, DV_K, COMBO_END};        // `
 const uint16_t PROGMEM c_mins[]   = {DV_G, DV_C, COMBO_END};        // -
 const uint16_t PROGMEM combo_5[]  = {DV_L, DV_W, COMBO_END};        // move left tab
 const uint16_t PROGMEM combo_6[]  = {DV_W, DV_V, COMBO_END};        // move right tab
-const uint16_t PROGMEM combo_7[]  = {DV_I, DV_O, COMBO_END};       // copy
+const uint16_t PROGMEM combo_7[]  = {IDX_L, DV_O, COMBO_END};       // copy
 const uint16_t PROGMEM f_16[]     = {DV_COMM, DV_QUOT, COMBO_END};  // f16
 const uint16_t PROGMEM f_15[]     = {DV_A, DV_O, COMBO_END};        // f15
 const uint16_t PROGMEM c_play[]   = {DV_K, DV_X, COMBO_END};        // play/pause
 const uint16_t PROGMEM combo_9[]  = {DV_COMM, DV_P, COMBO_END};     // select all
-const uint16_t PROGMEM f_19[]     = {DV_H, DV_T, DV_N, COMBO_END};  // f19
+const uint16_t PROGMEM f_19[]     = {IDX_R, DV_T, DV_N, COMBO_END}; // f19
 const uint16_t PROGMEM f_19b[]    = {DV_T, DV_N, COMBO_END};        // f19
 // const uint16_t PROGMEM f_19c[]    = {THB_R1, GUI_E, COMBO_END};     // f19
 const uint16_t PROGMEM combo_11[] = {DV_Q, DV_K, COMBO_END};        // cut
 const uint16_t PROGMEM combo_12[] = {DV_COLN, DV_Q, COMBO_END};     // quit
 const uint16_t PROGMEM combo_13[] = {DV_V, SFT_Z, COMBO_END};       // close window
-const uint16_t PROGMEM c_paste[]  = {DV_H, DV_N, COMBO_END};        // paste
-const uint16_t PROGMEM c_th[]     = {DV_H, DV_T, COMBO_END};        // "th"
-const uint16_t PROGMEM c_the[]    = {DV_H, DV_T, GUI_E, COMBO_END}; // "the"
+const uint16_t PROGMEM c_paste[]  = {IDX_R, DV_N, COMBO_END};       // paste
+const uint16_t PROGMEM c_th[]     = {IDX_R, DV_T, COMBO_END};       // "th"
+const uint16_t PROGMEM c_the[]    = {IDX_R, DV_T, GUI_E, COMBO_END};// "the"
 
 const uint16_t PROGMEM combo_15[] = {DV_O, GUI_E, COMBO_END};       // (
-const uint16_t PROGMEM combo_16[] = {GUI_E, DV_I, COMBO_END};       // )
+const uint16_t PROGMEM combo_16[] = {GUI_E, IDX_L, COMBO_END};      // )
 
 const uint16_t PROGMEM c_reset[]  = {DV_QUOT, DV_COMM, DV_DOT, COMBO_END}; // reset
 

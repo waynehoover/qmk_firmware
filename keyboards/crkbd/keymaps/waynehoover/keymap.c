@@ -12,7 +12,7 @@ enum ferris_layers {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [DVORAKIL] = LAYOUT_split_3x6_3(
     _______ , DV_QUOT , DV_COMM , DV_DOT  , DV_P    , DV_Y    ,         DV_F    , DV_G    , DV_C    , DV_R    , DV_M     , _______ ,
-    _______ , DV_A    , DV_O    , GUI_E   , DV_I    , DV_U    ,         DV_D    , DV_H    , DV_T    , DV_N    , DV_S     , _______ ,
+    _______ , DV_A    , DV_O    , GUI_E   , IDX_L   , DV_U    ,         DV_D    , IDX_R   , DV_T    , DV_N    , DV_S     , _______ ,
     _______ , DV_COLN , DV_Q    , DV_J    , DV_K    , DV_X    ,         DV_B    , DV_L    , DV_W    , DV_V    , DV_Z     , _______ ,
                                   _______ , THB_L2  , THB_L1  ,         THB_R1  , THB_R2  , TOG_MIC
   ),
