@@ -125,13 +125,13 @@ bool achordion_chord(uint16_t tap_hold_keycode,
 
 bool achordion_eager_mod(uint8_t mod) {
   switch (mod) {
-    // case MOD_LSFT:
+    case MOD_LSFT:
     case MOD_LALT:
     case MOD_LGUI:
-    // case MOD_RSFT:
+    case MOD_RSFT:
     case MOD_RALT:
     case MOD_RGUI:
-      return true;  // Eagerly apply Alt Gui mods.
+      return true;  // Eagerly apply Alt Gui Shift mods.
 
     default:
       return false;

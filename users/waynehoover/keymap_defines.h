@@ -69,8 +69,8 @@
 #define HYP_E    HYPR_T(DV_E)
 #define OS_SFT   OSM(MOD_LSFT)
 
-#define IDX_L    DV_I    // ideal DV_I, SFT_I is Orig
-#define IDX_R    DV_H    // ideal DV_H, SFT_H is Original
+#define IDX_L    SFT_I    // ideal DV_I, SFT_I is Orig
+#define IDX_R    SFT_H    // ideal DV_H, SFT_H is Original
 
 #define THB_L2   MO_LOW   // ideal OS_SFT, MO_LOW  is Original
 #define THB_L1   ALT_SPC  // ideal LOW_SPC, ALT_SPC is Original
