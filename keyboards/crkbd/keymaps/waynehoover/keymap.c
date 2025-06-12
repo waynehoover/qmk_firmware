@@ -1,4 +1,4 @@
-// qmk flash -c -kb crkbd -km waynehoover -e CONVERT_TO=promicro_rp2040
+// qmk flash -c -kb crkbd -km waynehoover -e CONVERT_TO=rp2040_ce
 
 #include QMK_KEYBOARD_H
 #include "../../../users/waynehoover/keymap_defines.h"
@@ -14,7 +14,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     _______ , DV_QUOT , DV_COMM , DV_DOT  , DV_P    , DV_Y    ,         DV_F    , DV_G    , DV_C    , DV_R    , DV_M     , _______ ,
     _______ , DV_A    , DV_O    , GUI_E   , IDX_L   , DV_U    ,         DV_D    , IDX_R   , DV_T    , DV_N    , DV_S     , _______ ,
     _______ , DV_COLN , DV_Q    , DV_J    , DV_K    , DV_X    ,         DV_B    , DV_L    , DV_W    , DV_V    , DV_Z     , _______ ,
-                                  _______ , THB_L2  , THB_L1  ,         THB_R1  , THB_R2  , TOG_MIC
+                                 TOG_WISP , THB_L2  , THB_L1  ,         THB_R1  , THB_R2  , TOG_MIC
   ),
 
   [LOWER] = LAYOUT_split_3x6_3(
@@ -69,7 +69,6 @@ oneshot_state os_alt_state  = os_up_unqueued;
 oneshot_state os_cmd_state  = os_up_unqueued;
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    if (!process_achordion(keycode, record)) { return false; }
     // if (!process_sentence_case(keycode, record)) { return false; }
     const bool pressed = record->event.pressed;
 
@@ -105,76 +104,28 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
-void matrix_scan_user(void) {
-  achordion_task();
-}
+const char chordal_hold_layout[MATRIX_ROWS][MATRIX_COLS] PROGMEM =
+  LAYOUT_split_3x6_3(
+      'L', 'L', 'L', 'L', 'L', 'L',  'R', 'R', 'R', 'R', 'R', 'R',
+      'L', 'L', 'L', 'L', 'L', 'L',  'R', 'R', 'R', 'R', 'R', 'R',
+      'L', 'L', 'L', 'L', 'L', 'L',  'R', 'R', 'R', 'R', 'R', 'R',
+                     '*', '*', '*',  '*', '*', '*'
+  );
 
-bool achordion_chord(uint16_t tap_hold_keycode,
-                     keyrecord_t* tap_hold_record,
-                     uint16_t other_keycode,
-                     keyrecord_t* other_record) {
-    switch (tap_hold_keycode) {
-        case THB_L2:
-        case THB_L1:
-        case THB_R1:
-        case THB_R2:
-            return true;
-    }
-    return achordion_opposite_hands(tap_hold_record, other_record);
-}
+// bool achordion_eager_mod(uint8_t mod) {
+//   switch (mod) {
+//     case MOD_LSFT:
+//     case MOD_LALT:
+//     case MOD_LGUI:
+//     case MOD_RSFT:
+//     case MOD_RALT:
+//     case MOD_RGUI:
+//       return true;  // Eagerly apply Alt Gui Shift mods.
 
-bool achordion_eager_mod(uint8_t mod) {
-  switch (mod) {
-    case MOD_LSFT:
-    case MOD_LALT:
-    case MOD_LGUI:
-    case MOD_RSFT:
-    case MOD_RALT:
-    case MOD_RGUI:
-      return true;  // Eagerly apply Alt Gui Shift mods.
-
-    default:
-      return false;
-  }
-}
-
-uint16_t achordion_streak_chord_timeout(uint16_t tap_hold_keycode, uint16_t next_keycode) {
-  if (IS_QK_LAYER_TAP(tap_hold_keycode)) {
-    return 0;  // Disable streak detection on layer-tap keys.
-  }
-
-  // Otherwise, tap_hold_keycode is a mod-tap key.
-  uint8_t mod = mod_config(QK_MOD_TAP_GET_MODS(tap_hold_keycode));
-  if ((mod & MOD_LSFT) != 0) {
-    return 100;  // A shorter streak timeout for Shift mod-tap keys.
-  } else {
-    return 125;  // A longer timeout otherwise. or same...
-  }
-}
-
-bool achordion_streak_continue(uint16_t keycode) {
-  // If mods other than shift or AltGr are held, don't continue the streak.
-  if (get_mods() & (MOD_MASK_CG | MOD_BIT_LALT)) return false;
-  // This function doesn't get called for holds, so convert to tap keycodes.
-  if (IS_QK_MOD_TAP(keycode)) {
-    keycode = QK_MOD_TAP_GET_TAP_KEYCODE(keycode);
-  }
-  if (IS_QK_LAYER_TAP(keycode)) {
-    keycode = QK_LAYER_TAP_GET_TAP_KEYCODE(keycode);
-  }
-  // Regular letters and punctuation continue the streak. (modified for dvorakiulm layout)
-  if (keycode >= KC_A && keycode <= KC_X) return true;
-  switch (keycode) {
-    case DV_W:
-    case DV_V:
-    case DV_S:
-    case DV_Z:
-    case KC_SPACE:
-    case THB_L1:
-      return true;
-  }
-  return false;  // All other keys end the streak.
-}
+//     default:
+//       return false;
+//   }
+// }
 
 // this instead of TO(LOWER) so that I can have a visual indicator in hammerspoon by sending the F18 and F17 keys
 void toggle_lower_layer() {
@@ -186,21 +137,6 @@ void toggle_lower_layer() {
         tap_code16(KC_F17);
     }
 }
-
-// https://docs.qmk.fm/ChangeLog/20240825#key-override-keymap-c-signature-change-24120
-// send enter on shift-backspace (not working... didnt investigate)
-// const key_override_t sft_bspc_key_override = ko_make_basic(MOD_MASK_SHIFT, KC_BSPC, KC_ENT);
-
-// // This globally defines all key overrides to be used
-// const key_override_t **key_overrides = (const key_override_t *[]){
-//     &sft_bspc_key_override,
-//     NULL // Null terminate the array of overrides!
-// };
-
-// set trystate
-// layer_state_t layer_state_set_user(layer_state_t state) {
-//   return update_tri_layer_state(state, LOWER, RAISE, ADJUST);
-// }
 
 // Per key tapping term settings
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {

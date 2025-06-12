@@ -5,7 +5,6 @@
 #include "keymap_dvorakiulm.h"
 #include "callum/oneshot.h"
 #include "callum/swapper.h"
-#include "features/achordion.h" // https://getreuer.info/posts/keyboards/achordion/index.html#add-achordion-to-your-keymap
 // #include "features/sentence_case.h" // https://getreuer.info/posts/keyboards/sentence-case/index.html#add-it-to-your-keymap
 
 #define MASTER_RIGHT
@@ -23,6 +22,8 @@
 #define DEL_LINE G(S(DV_K))     // Delete Line vscode/obsidian
 #define EMOJI    G(C(KC_SPC))   // MacOS Emoji
 #define TOG_MIC  G(S(KC_SPC))   // Toggle mic (slack)
+#define TOG_WISP KC_F20         // Toggle wisp flow (key command)
+#define LOCK_WIS G(KC_F20)      // Lock wisp flow (key command)
 #define FND_ALL  G(S(DV_F))     // Find all
 #define TOG_COMM G(DV_SLSH)     // Toggle comment
 #define ALT_SPC  LALT_T(KC_SPC)
