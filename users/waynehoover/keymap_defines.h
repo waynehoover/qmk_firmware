@@ -7,8 +7,6 @@
 #include "callum/swapper.h"
 // #include "features/sentence_case.h" // https://getreuer.info/posts/keyboards/sentence-case/index.html#add-it-to-your-keymap
 
-#define MASTER_RIGHT
-
 #define WD_LFT   A(KC_LEFT)     // Word left
 #define WD_RHT   A(KC_RIGHT)    // Word right
 #define DEL_WD   A(KC_BSPC)     // Delete Word
