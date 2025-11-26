@@ -22,8 +22,8 @@
 #define DEL_LINE G(S(DV_K))     // Delete Line vscode/obsidian
 #define EMOJI    G(C(KC_SPC))   // MacOS Emoji
 #define TOG_MIC  G(S(KC_SPC))   // Toggle mic (slack)
-#define TOG_WISP KC_F20         // Toggle wisp flow (key command)
-#define LOCK_WIS G(KC_F20)      // Lock wisp flow (key command)
+#define TOG_WISP G(KC_F6)       // Toggle wisp flow (key command)
+#define LOCK_WIS A(DV_L)        // Lock wisp flow (key command)
 #define FND_ALL  G(S(DV_F))     // Find all
 #define TOG_COMM G(DV_SLSH)     // Toggle comment
 #define ALT_SPC  LALT_T(KC_SPC)
@@ -76,8 +76,17 @@
 #define THB_L2   MO_LOW   // ideal OS_SFT, MO_LOW  is Original
 #define THB_L1   ALT_SPC  // ideal LOW_SPC, ALT_SPC is Original
 
-#define THB_R1   KC_BSPC // ideal RAI_BSP, KC_BSPC is Original
+#define THB_R1   KC_BSPC  // ideal RAI_BSP, KC_BSPC is Original
 #define THB_R2   RAI_ENT  // ideal ALT_ENT, RAI_ENT is Original
+
+// Layer definitions
+enum layers {
+  DVORAKIL,
+  LOWER,
+  RAISE,
+  NUM,
+  ADJUST
+};
 
 enum keycodes {
   // Custom oneshot mod implementation with no timers.
@@ -96,6 +105,10 @@ enum keycodes {
   SEND_THE,
 };
 
-void toggle_lower_layer(void);
+// Combo events enum (defined in combos.c but needed here for get_combo_term)
+enum combos {
+  CM_0, CM_1, CM_2, CM_3, CM_4, CM_5, CM_6, CM_7, CM_8, CM_9,
+  CM_11, CM_10, CM_12, CM_13, CM_14, CM_15, CM_16, CM_17, CM_18, CM_19, CM_20
+};
 
-#include "combos.c"
+void toggle_lower_layer(void);

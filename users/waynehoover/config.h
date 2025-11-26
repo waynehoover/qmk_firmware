@@ -1,6 +1,6 @@
 #pragma once
 
-#define MASTER_RIGHT
+#define MASTER_LEFT
 
 // Configure the global tapping term (default: 200ms)
 #undef TAPPING_TERM
