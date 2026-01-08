@@ -4,10 +4,11 @@
 
 // Configure the global tapping term (default: 200ms)
 #undef TAPPING_TERM
-#define TAPPING_TERM 111
+#define TAPPING_TERM 250
 #define PERMISSIVE_HOLD
+#define FLOW_TAP_TERM 150
 #define CHORDAL_HOLD
-// #define FLOW_TAP_TERM 100
+#define SPECULATIVE_HOLD
 
 #define TAPPING_TERM_PER_KEY
 #define QUICK_TAP_TERM_PER_KEY
