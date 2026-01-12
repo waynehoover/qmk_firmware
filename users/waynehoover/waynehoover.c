@@ -96,10 +96,12 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         case THB_L2:
         case THB_R2:
             return TAPPING_TERM - 5;
+        case SFT_I:
+        case SFT_H:
+            return TAPPING_TERM - 25; // Faster shift activation
         case ALT_O:
         case GUI_E:
-        case SFT_I:
-            return TAPPING_TERM; // was - 10
+            return TAPPING_TERM;
         default:
             return TAPPING_TERM;
     }
@@ -170,4 +172,14 @@ bool caps_word_press_user(uint16_t keycode) {
         default:
             return false; // Deactivate Caps Word.
     }
+}
+
+bool get_speculative_hold(uint16_t keycode, keyrecord_t* record) {
+    switch (keycode) { // These keys may be speculatively held.
+        case GUI_E:
+        case IDX_L:
+        case IDX_R:
+            return true;
+    }
+    return false; // Disable otherwise.
 }
