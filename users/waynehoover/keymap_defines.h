@@ -28,6 +28,7 @@
 #define ALT_BSP  LALT_T(KC_BSPC)
 #define ALT_O    LALT_T(DV_O)
 #define ALT_ENT  LALT_T(KC_ENT)
+#define ALT_COLN LALT_T(DV_COLN)
 #define GUI_ESC  LGUI_T(KC_ESC)
 #define GUI_SPC  LGUI_T(KC_SPC)
 #define GUI_ENT  LGUI_T(KC_ENT)
@@ -66,16 +67,17 @@
 #define HYP_SPC  HYPR_T(KC_SPC)
 #define HYP_W    HYPR_T(DV_W)
 #define HYP_E    HYPR_T(DV_E)
+#define MEH_SPC  MEH_T(KC_SPC)
 #define OS_SFT   OSM(MOD_LSFT)
 
-#define IDX_L    SFT_I    // ideal DV_I, SFT_I is Orig
+#define IDX_L    SFT_I    // ideal DV_I, SFT_I is Original
 #define IDX_R    SFT_H    // ideal DV_H, SFT_H is Original
 
 #define THB_L2   MO_LOW   // ideal OS_SFT, MO_LOW  is Original
-#define THB_L1   ALT_SPC  // ideal LOW_SPC, ALT_SPC is Original
+#define THB_L1   MEH_SPC  // ideal LOW_SPC, MEH_SPC is Original
 
 #define THB_R1   KC_BSPC  // ideal RAI_BSP, KC_BSPC is Original
-#define THB_R2   RAI_ENT  // ideal ALT_ENT, RAI_ENT is Original
+#define THB_R2   RAI_ENT  // ideal MEH_ENT, RAI_ENT is Original
 
 // Layer definitions
 enum layers {

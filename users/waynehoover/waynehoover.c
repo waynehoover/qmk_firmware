@@ -98,7 +98,7 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
             return TAPPING_TERM - 5;
         case SFT_I:
         case SFT_H:
-            return TAPPING_TERM - 25; // Faster shift activation
+            return TAPPING_TERM; // Default timing
         case ALT_O:
         case GUI_E:
             return TAPPING_TERM;

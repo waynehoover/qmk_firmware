@@ -1,10 +1,10 @@
 #pragma once
 
-#define MASTER_LEFT
+#define MASTER_RIGHT
 
 #undef TAPPING_TERM
 #define TAPPING_TERM 111
-#define PERMISSIVE_HOLD
+// #define PERMISSIVE_HOLD
 #define CHORDAL_HOLD
 // #define FLOW_TAP_TERM 100
 // #define SPECULATIVE_HOLD
