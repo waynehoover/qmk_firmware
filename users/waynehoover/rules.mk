@@ -9,5 +9,4 @@ DEFERRED_EXEC_ENABLE = yes
 SRC += waynehoover.c
 SRC += callum/oneshot.c
 SRC += callum/swapper.c
-SRC += features/achordion.c
 # SRC += features/sentence_case
