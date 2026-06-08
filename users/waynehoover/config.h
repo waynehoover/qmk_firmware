@@ -12,7 +12,6 @@
 #define TAPPING_TERM_PER_KEY
 #define QUICK_TAP_TERM_PER_KEY
 
-#define FORCE_NKRO
 #define QMK_KEYS_PER_SCAN 4
 #define ONESHOT_TAP_TOGGLE 2  /* Tapping this number of times holds the key until tapped once again. */
 #define ONESHOT_TIMEOUT 1000  /* Time (in ms) before the one shot key is released */
