@@ -62,6 +62,7 @@
 #define NUM_HSH  LT(NUM, KC_HASH)
 #define LOW_TAB  LT(LOWER, KC_TAB)
 #define LOW_SPC  LT(LOWER, KC_SPC)
+#define LOW_ESC  LT(LOWER, KC_ESC)
 #define HYP_ENT  HYPR_T(KC_ENT)
 #define HYP_BSPC HYPR_T(KC_BSPC)
 #define HYP_SPC  HYPR_T(KC_SPC)
@@ -73,7 +74,7 @@
 #define IDX_L    SFT_I    // ideal DV_I, SFT_I is Original
 #define IDX_R    SFT_H    // ideal DV_H, SFT_H is Original
 
-#define THB_L2   MO_LOW   // ideal OS_SFT, MO_LOW  is Original
+#define THB_L2   LOW_ESC  // ideal OS_SFT, MO_LOW  is Original
 #define THB_L1   MEH_SPC  // ideal LOW_SPC, MEH_SPC is Original
 
 #define THB_R1   KC_BSPC  // ideal RAI_BSP, KC_BSPC is Original
