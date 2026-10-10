@@ -183,3 +183,13 @@ bool get_speculative_hold(uint16_t keycode, keyrecord_t* record) {
     }
     return false; // Disable otherwise.
 }
+
+// Hold F20 while RAISE is on, so Hammerspoon 2 can switch the knob to brightness.
+layer_state_t layer_state_set_user(layer_state_t state) {
+    static bool raise_on = false;
+    if (layer_state_cmp(state, RAISE) != raise_on) {
+        raise_on = !raise_on;
+        raise_on ? register_code(KC_F20) : unregister_code(KC_F20);
+    }
+    return state;
+}
